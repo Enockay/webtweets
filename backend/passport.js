@@ -1,4 +1,3 @@
-// src/config/passport.js
 const passport = require('passport');
 const TwitterStrategy = require('passport-twitter').Strategy;
 const User = require('./models/User');
@@ -7,7 +6,7 @@ require('dotenv').config();
 passport.use(new TwitterStrategy({
   consumerKey: process.env.TWITTER_CONSUMER_KEY,
   consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-  callbackURL: process.env.TWITTER_CALLBACK_URL || "http://localhost:3000/auth/twitter/callback"
+  callbackURL: process.env.TWITTER_CALLBACK_URL || "https://webtweets.fly.dev/auth/twitter/callback"
 },
 async (token, tokenSecret, profile, done) => {
   try {
@@ -42,3 +41,5 @@ passport.deserializeUser(async (id, done) => {
     done(err, null);
   }
 });
+
+module.exports = passport;
