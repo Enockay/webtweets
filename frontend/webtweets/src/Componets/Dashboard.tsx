@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import BadgeCard from './BadgeCard';
 import Sidebar from './Sidebar';
 import Header from './Header';
 import Countdown from './Countdown';
 import BadgePurchaseModal from './BadgePurchaseModal';
+import { useNavigate } from 'react-router-dom'; // Import useHistory
 
 interface User {
   username: string;
+  displayName: string;
+  profileImageUrl: string;
   badges: { id: string; name: string; duration: string }[];
 }
 
@@ -20,19 +22,43 @@ const Dashboard: React.FC = () => {
   const [currentSection, setCurrentSection] = useState('home');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBadge, setSelectedBadge] = useState<{ id: string; name: string; duration: string; description: string } | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
-      const userResponse = await axios.get('http://localhost:3000/api/user');
-      setUser(userResponse.data);
-      const liveUsersResponse = await axios.get('http://localhost:3000/api/live-users');
-      setLiveUsers(liveUsersResponse.data);
-      const pastTweetsResponse = await axios.get('http://localhost:3000/api/past-tweets');
-      setPastTweets(pastTweetsResponse.data);
+      try {
+        const userResponse = await fetch('https://webtweets.fly.dev/api/user', {
+          credentials: 'include',
+        });
+        if (userResponse.status === 401) {
+          navigate('/login'); // Redirect to login if unauthorized
+          return;
+        }
+        const userData = await userResponse.json();
+        console.log(userData)
+        setUser(userData);
+
+        const liveUsersResponse = await fetch('https://webtweets.fly.dev/api/live-users', {
+          credentials: 'include',
+        });
+        const liveUsersData = await liveUsersResponse.json();
+        console.log(liveUsersData)
+        setLiveUsers(liveUsersData);
+
+
+        const pastTweetsResponse = await fetch('https://webtweets.fly.dev/api/past-tweets', {
+          credentials: 'include',
+        });
+        const pastTweetsData = await pastTweetsResponse.json();
+        setPastTweets(pastTweetsData);
+        console.log(pastTweetsData);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
     };
 
     fetchData();
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -42,8 +68,23 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const handleSuggestTweet = async () => {
-    await axios.post('http://localhost:3000/api/tweets/suggest', { tweet: suggestedTweet });
+    await fetch('https://webtweets.fly.dev/api/tweets/suggest', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({ tweet: suggestedTweet }),
+    });
     setSuggestedTweet('');
+  };
+
+  const handleLogout = async () => {
+    await fetch('/api/logout', {
+      method: 'POST',
+      credentials: 'include',
+    });
+    setUser(null);
   };
 
   const openModal = (badge: { id: string; name: string; duration: string; description: string }) => {
@@ -115,7 +156,8 @@ const Dashboard: React.FC = () => {
                   <div className="overflow-y-auto max-h-80 mt-4">
                     {liveUsers.map((liveUser) => (
                       <div key={liveUser.username} className="p-4 bg-gray-800 rounded shadow mb-4">
-                        {liveUser.username}
+                        <img src={liveUser.profileImageUrl} alt={liveUser.username} className="w-12 h-12 rounded-full" />
+                        <span>{liveUser.username}</span>
                       </div>
                     ))}
                   </div>
@@ -152,7 +194,7 @@ const Dashboard: React.FC = () => {
     <div className="flex flex-col lg:flex-row min-h-screen bg-gray-900 text-white">
       <Sidebar onSectionChange={setCurrentSection} />
       <div className="flex-1 p-4 lg:p-8 lg:ml-64">
-        <Header username={user?.username} />
+      {user && <Header username={user.username} profileImageUrl={user.profileImageUrl} onLogout={handleLogout} />}
         {renderSection()}
         {isModalOpen && selectedBadge && (
           <BadgePurchaseModal badge={selectedBadge} onClose={() => setIsModalOpen(false)} />

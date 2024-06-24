@@ -1,8 +1,7 @@
-// src/routes/auth.js
 const express = require('express');
 const passport = require('passport');
 const bcrypt = require('bcryptjs');
-const User = require('../models/User');
+const User = require('../models/User'); // Assuming User model is defined in '../models/User'
 const router = express.Router();
 
 // Twitter authentication routes
@@ -12,7 +11,7 @@ router.get('/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/' }),
   (req, res) => {
     // Successful authentication, redirect home.
-    res.redirect('/');
+    res.redirect('https://webtweets.vercel.app/Dashboard');
   }
 );
 

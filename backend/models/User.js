@@ -1,4 +1,3 @@
-// src/models/User.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Schema = mongoose.Schema;
@@ -40,6 +39,10 @@ const userSchema = new Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  isLive: {
+    type: Boolean,
+    default: false
   }
 });
 

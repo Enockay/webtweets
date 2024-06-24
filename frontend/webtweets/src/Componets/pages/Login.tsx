@@ -23,7 +23,7 @@ const Login: React.FC = () => {
       setLoading(false);
       if (response.ok) {
         // Handle successful login (e.g., save token, redirect)
-        console.log('Login successful:', data);
+       // console.log('Login successful:', data);
         navigate('/Dashboard'); // Redirect to Dashboard
       } else {
         console.error('Login failed:', data);
