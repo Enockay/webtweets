@@ -2,14 +2,23 @@ const express = require('express');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const authRoutes = require('./routes/auth');
+const session = require("express-session")
 require('./passport'); 
 require('dotenv').config();
 const cors = require('cors');
+const secret = 'aOpJFUXdhe4Nt5i5RAKzbuStAPCLK5joDSqqUlfdtZg='
+
 
 const app = express();
 
 app.use(express.json());
 app.use(passport.initialize());
+
+app.use(session({
+  secret: secret,
+  resave: true,
+  saveUninitialized: true
+}));
 
 // Configure CORS to allow requests from multiple origins
 const allowedOrigins = ['https://webtweets.vercel.app', 'http://localhost:5173', 'http://localhost:5174'];
