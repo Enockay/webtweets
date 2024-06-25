@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
+interface Badge {
+  id: string;
+  name: string;
+  duration: string;
+  description: string;
+  price: string; // Add price field
+}
+
 interface BadgePurchaseModalProps {
-  badge: { id: string; name: string; duration: string; description: string };
+  badge: Badge;
   onClose: () => void;
 }
 
@@ -16,9 +24,10 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-8 rounded shadow-lg w-80">
+      <div className="bg-gray-800 p-8 rounded shadow-lg w-80">
         <h2 className="text-xl font-semibold mb-4">Purchase {badge.name}</h2>
-        <p className="text-gray-700 mb-4">{badge.description}</p>
+        <p className="text-yellow-100 mb-2">{badge.description}</p>
+        <p className="text-yellow-100 mb-4 font-bold">Price: {badge.price}</p>
         <input
           type="text"
           value={phoneNumber}

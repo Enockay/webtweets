@@ -6,7 +6,7 @@ interface BadgeCardProps {
 
 const BadgeCard: React.FC<BadgeCardProps> = ({ badge }) => {
   return (
-    <div className="p-4 bg-gray-800 rounded shadow">
+    <div className="p-4 bg-white rounded shadow">
       <div>{badge.name}</div>
       <div className="text-gray-400">{badge.duration}</div>
     </div>

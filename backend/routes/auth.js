@@ -4,31 +4,30 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User'); // Assuming User model is defined in '../models/User'
 const router = express.Router();
 
-// Twitter authentication routes
-router.get('/twitter', passport.authenticate('twitter'));
-
 router.get('/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/' }),
   (req, res) => {
-    // Successful authentication, redirect home.
-    res.redirect('https://webtweets.vercel.app/Dashboard');
+    // Assuming user details are available in req.user
+    const { username, displayName, profileImageUrl } = req.user;
+    // Redirect with user details as query params
+    res.redirect(`https://webtweets.vercel.app/Dashboard?username=${username}&displayName=${displayName}&profileImageUrl=${profileImageUrl}`);
   }
 );
 
-router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+// Manual login route
+router.post('/login', passport.authenticate('local'), async (req, res) => {
   try {
-    const user = await User.findOne({ email });
-    if (!user || !await bcrypt.compare(password, user.password)) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
-    // You can set up session or token here
-    res.status(200).json({ message: 'Login successful', user });
+    // If authentication is successful, `req.user` contains authenticated user
+   
+    res.json({ message: 'Login successful', user: req.user });
+    
   } catch (err) {
+    console.log(err)
     res.status(500).json({ message: 'Server error', error: err });
   }
 });
 
+// Signup route
 router.post('/signup', async (req, res) => {
   const { username, email, password } = req.body;
   try {

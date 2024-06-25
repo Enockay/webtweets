@@ -1,28 +1,25 @@
+const createError = require('http-errors');
 const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 const mongoose = require('mongoose');
-const passport = require('passport');
-const authRoutes = require('./routes/auth');
+const passport = require('./passport'); // Ensure this path is correct
 const session = require('express-session');
-require('./passport'); 
-require('dotenv').config();
 const cors = require('cors');
-const secret = 'aOpJFUXdhe4Nt5i5RAKzbuStAPCLK5joDSqqUlfdtZg=';
-const userRoutes = require('./routes/users');
+require('dotenv').config();
+
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/dashboard');
+const authRoutes = require('./routes/auth');
 const { ensureAuthenticated } = require('./middleware/auth');
+const uri = process.env.MONGODB_URI || 'mongodb+srv://myAtlasDBUser:Enockay23@bmgpfws.bfx6ekr.mongodb.net/Webtweets?retryWrites=true&w=majority';
 
 const app = express();
 
-app.use(express.json());
-app.use(passport.initialize());
-
-app.use(session({
-  secret: secret,
-  resave: true,
-  saveUninitialized: true
-}));
-
-// Configure CORS to allow requests from multiple origins and allow credentials
+const secret = 'aOpJFUXdhe4Nt5i5RAKzbuStAPCLK5joDSqqUlfdtZg=';
 const allowedOrigins = ['https://webtweets.vercel.app', 'http://localhost:5173', 'http://localhost:5174'];
+
 const corsOptions = {
   origin: function (origin, callback) {
     if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
@@ -31,25 +28,52 @@ const corsOptions = {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true, // This allows the browser to include credentials in the requests
+  credentials: true,
   methods: 'GET,HEAD,OPTIONS,POST,PUT',
-  allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  allowedHeaders: 'Origin, X-Requested-With, Content-Type, Accept, Authorization',
 };
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'jade');
+
+app.use(logger('dev'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(session({
+  secret: secret,
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false }, // Set secure to true in production
+}));
+
+app.use(passport.initialize());
+app.use(passport.session()); // Initialize passport session
 
 app.use(cors(corsOptions));
 
+app.use('/', indexRouter);
+app.use('/api',  usersRouter);
 app.use('/auth', authRoutes);
-app.use('/api', ensureAuthenticated, userRoutes);
 
-const uri = process.env.MONGODB_URI || 'mongodb+srv://myAtlasDBUser:Enockay23@bmgpfws.bfx6ekr.mongodb.net/Webtweets?retryWrites=true&w=majority';
-mongoose.connect(uri, { 
-  useNewUrlParser: true, 
-  useUnifiedTopology: true 
+app.use((req, res, next) => {
+  next(createError(404));
+});
+
+app.use((err, req, res, next) => {
+  res.locals.message = err.message;
+  res.locals.error = req.app.get('env') === 'development' ? err : {};
+
+  res.status(err.status || 500);
+  res.render('error');
+});
+
+mongoose.connect(uri, {
 })
-  .then(() => console.log('MongoDB connected'))
+  .then(() => console.log('successful connection to webtweets Db'))
   .catch(err => console.error('MongoDB connection error:', err));
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`App running on port ${PORT}`);
-});
+
+module.exports = app;

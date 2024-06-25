@@ -1,20 +1,22 @@
-// src/pages/Login.tsx
+// src/Components/pages/Login.tsx
 import React, { useState } from 'react';
 import { FaTwitter } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
+import { useUser } from '../Context';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { setUser } = useUser();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('https://webtweets.fly.dev/auth/login', {
+      const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -22,9 +24,10 @@ const Login: React.FC = () => {
       const data = await response.json();
       setLoading(false);
       if (response.ok) {
-        // Handle successful login (e.g., save token, redirect)
-       // console.log('Login successful:', data);
-        navigate('/Dashboard'); // Redirect to Dashboard
+        console.log('Login successful:', data);
+        setUser(data.user); // Set user data in context
+        localStorage.setItem('user', JSON.stringify(data.user)); // Set user data in localStorage
+        navigate('/Dashboard');
       } else {
         console.error('Login failed:', data);
       }
