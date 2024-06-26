@@ -14,4 +14,9 @@
       display: none;  /* Safari and Chrome */
     }
   }
+ 
+  .badge-container {
+    position: relative;
+    padding-top: 100px;
+  }
   

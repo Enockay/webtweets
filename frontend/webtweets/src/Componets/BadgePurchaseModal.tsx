@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { ClipLoader } from 'react-spinners';
+import { useUser } from '../Componets/Context';
 
 interface Badge {
   id: string;
   name: string;
   duration: string;
   description: string;
-  price: string; // Add price field
+  price: string;
 }
 
 interface BadgePurchaseModalProps {
@@ -16,10 +18,35 @@ interface BadgePurchaseModalProps {
 
 const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose }) => {
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const { user} = useUser();
 
   const handlePurchase = async () => {
-    await axios.post('http://localhost:3000/api/badges/purchase', { duration: badge.duration, phoneNumber });
-    onClose();
+    if (!user) {
+      setMessage('You need to be logged in to purchase a badge.');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const response = await axios.post('https://webtweets-dawn-forest-2637.fly.dev/badges/purchase', {
+        duration: badge.duration,
+        phoneNumber,
+        description: badge.description,
+        price: badge.price,
+        user:user.username
+      });
+      if (response.data.success) {
+        setMessage('Successfully purchased the badge.');
+      } else {
+        setMessage('Failed to purchase the badge.');
+      }
+    } catch (error) {
+      setMessage('An error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -33,13 +60,14 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
           value={phoneNumber}
           onChange={(e) => setPhoneNumber(e.target.value)}
           placeholder="Enter M-Pesa number"
-          className="w-full p-2 mb-4 border rounded"
+          className="w-full p-2 mb-4 border rounded text-black"
         />
         <button
           onClick={handlePurchase}
-          className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center justify-center"
+          disabled={loading}
         >
-          Purchase
+          {loading ? <ClipLoader size={20} color="white" /> : 'Purchase'}
         </button>
         <button
           onClick={onClose}
@@ -47,6 +75,11 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
         >
           Cancel
         </button>
+        {message && (
+          <div className={`mt-4 p-2 rounded text-center ${message.includes('success') ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+            {message}
+          </div>
+        )}
       </div>
     </div>
   );

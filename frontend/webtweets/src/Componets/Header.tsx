@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
+import icon from "../assets/icon.jpg";
 
 interface HeaderProps {
   username: string | undefined;
   profileImageUrl: string | undefined;
   onLogout: () => void;
 }
-const icon = "../assets/icon2.jpg";
+
+
 const Header: React.FC<HeaderProps> = ({ username, profileImageUrl, onLogout }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -15,7 +17,7 @@ const Header: React.FC<HeaderProps> = ({ username, profileImageUrl, onLogout }) 
   };
 
   return (
-    <header className="flex items-center justify-between bg-gradient-to-r from-purple-500 to-blue-500 p-4 text-white relative">
+    <header className="flex items-center justify-between bg-gradient-to-r from-green-400 to-blue-500 p-4 text-white relative">
       <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url(${icon})`, backgroundSize: 'cover' }}></div>
       <div className="relative flex items-center space-x-4">
         <div className="flex items-center">
@@ -32,12 +34,12 @@ const Header: React.FC<HeaderProps> = ({ username, profileImageUrl, onLogout }) 
               onClick={handleToggleDropdown}
             />
           )}
-          <span className="ml-2 cursor-pointer text-lime-500" onClick={handleToggleDropdown}>
+          <span className="ml-2 cursor-pointer text-gray-700" onClick={handleToggleDropdown}>
             {username}!
           </span>
         </div>
         {dropdownOpen && (
-          <div className="relative right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-lg">
+          <div className="absolute mt-16 w-48 bg-white text-black rounded-lg shadow-lg z-10">
             <button
               onClick={onLogout}
               className="w-full px-4 py-2 text-left hover:bg-gray-200"
@@ -47,10 +49,17 @@ const Header: React.FC<HeaderProps> = ({ username, profileImageUrl, onLogout }) 
           </div>
         )}
       </div>
+      <div className="flex items-center space-x-4">
+        <img
+          src={icon}
+          alt="Logo"
+          className="w-10 h-10 rounded-full"
+        />
+      </div>
       {!username && (
         <a
           href="/login"
-          className="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white rounded"
+          className="px-4 py-2 bg-red-500 hover:bg-red-700 text-white rounded"
         >
           Login
         </a>

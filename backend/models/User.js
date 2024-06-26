@@ -18,16 +18,17 @@ const userSchema = new Schema({
   profileImageUrl: {
     type: String
   },
-  badges: [
-    {
-      type: String
-    }
-  ],
+  phoneNumber: {
+    type:String
+  },
+  badges: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Badge' }],
+
   hashtags: [
     {
       type: String
     }
   ],
+  
   email: {
     type: String,
     unique: true,

@@ -13,8 +13,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/dashboard');
 const authRoutes = require('./routes/auth');
 const { ensureAuthenticated } = require('./middleware/auth');
-const uri = process.env.MONGODB_URI || 'mongodb+srv://myAtlasDBUser:Enockay23@bmgpfws.bfx6ekr.mongodb.net/Webtweets?retryWrites=true&w=majority';
-
+const badge = require("./routes/Badge");
 const app = express();
 
 const secret = 'aOpJFUXdhe4Nt5i5RAKzbuStAPCLK5joDSqqUlfdtZg=';
@@ -57,6 +56,7 @@ app.use(cors(corsOptions));
 app.use('/', indexRouter);
 app.use('/api',  usersRouter);
 app.use('/auth', authRoutes);
+app.use('/badges', badge);
 
 app.use((req, res, next) => {
   next(createError(404));
@@ -70,7 +70,7 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-mongoose.connect(uri, {
+mongoose.connect(process.env.MONGO_URI, {
 })
   .then(() => console.log('successful connection to webtweets Db'))
   .catch(err => console.error('MongoDB connection error:', err));

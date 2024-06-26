@@ -1,5 +1,5 @@
 import React from 'react';
-import { FaHome, FaProjectDiagram, FaCog, FaShoppingCart } from 'react-icons/fa';
+import { FaHome, FaProjectDiagram, FaCog, FaShoppingCart,FaFolderPlus } from 'react-icons/fa';
 
 interface SidebarProps {
   onSectionChange: (section: string) => void;
@@ -16,6 +16,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onSectionChange }) => {
             <li className="mb-6">
               <button onClick={() => onSectionChange('home')} className="flex items-center text-white w-full">
                 <FaHome className="mr-2" /> Home
+              </button>
+            </li>
+            <li className="mb-6">
+              <button onClick={() => onSectionChange('projects')} className="flex items-center text-white w-full">
+                <FaFolderPlus className="mr-2" /> create project
               </button>
             </li>
             <li className="mb-6">

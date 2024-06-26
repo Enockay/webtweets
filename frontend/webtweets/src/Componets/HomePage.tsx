@@ -9,7 +9,7 @@ import { BsArrowRightShort } from 'react-icons/bs';
 interface User {
   username: string;
   profileImageUrl?: string;
-  badges: { id: string; name: string; duration: string }[];
+  badges: string[];
 }
 
 interface Tweet {
@@ -33,7 +33,7 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
   const [suggestedTweet, setSuggestedTweet] = useState('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [selectedLiveUsers, setSelectedLiveUsers] = useState<string[]>([]);
-  const [userSuggestedHashtags, setUserSuggestedHashtags] = useState<string[]>(['RutoMustGo', 'RejectFinanceBill2023', 'MaandamanoTuesday']);
+  const [userSuggestedHashtags, setUserSuggestedHashtags] = useState<string[]>([]);
   const [chatGptResponse, setChatGptResponse] = useState<string>('');
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,9 +74,7 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
           <section className="mb-4 lg:mb-8">
             <h2 className="text-xl font-bold mb-4 text-red-400">Badges</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {user?.badges.map((badge) => (
-                <BadgeCard key={badge.id} badge={badge} />
-              ))}
+              <BadgeCard badgeIds={user?.badges || []} />
             </div>
           </section>
           <section className="mb-4 lg:mb-8">
@@ -88,7 +86,7 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
                   <div className="flex flex-col space-y-2">
                     <label htmlFor="file-upload" className="cursor-pointer flex items-center space-x-2">
                       <AiOutlineFileImage size={24} />
-                      <span>Upload Image</span>
+                      <span>post</span>
                     </label>
                     <input
                       id="file-upload"
@@ -132,17 +130,35 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
               </div>
             )}
           </section>
-          <section className="mb-4 lg:mb-8">
-            <h2 className="text-2xl font-bold mb-4">How WebTweets Works</h2>
-            <p className="mt-4">
-              WebTweets allows users to suggest tweets, tag other live users, and use hashtags to increase the visibility of their tweets.
-              We charge for badges to cover the cost of API access from Twitter, which is $5000 per month.
-            </p>
-            <p className="mt-2">
-              After the countdown, suggested hashtags and user IDs will be amplified 5X on Twitter, reaching a larger audience.
-              Users can upload images, tag live users, and add hashtags to their suggested tweets.
-            </p>
+          <section className="mb-4 lg:mb-8 p-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg shadow-lg text-white max-h-96 overflow-y-auto scrollbar-hide">
+            <h4 className="text-xl font-bold mb-4">How WebTweets Works</h4>
+            <div className="bg-white text-black p-4 rounded-lg shadow-md ">
+              <h3 className="text-xl font-semibold mb-2">Key Features</h3>
+              <ul className="list-disc list-inside">
+                <li className="mb-2">
+                  <strong>Suggest Tweets:</strong> WebTweets allows users to suggest tweets, tag other live users, and use hashtags to increase the visibility of their tweets.
+                </li>
+                <li className="mb-2">
+                  <strong>Badge System:</strong> We charge for badges to cover the cost of API access from Twitter, which is $5000 per month.
+                </li>
+                <li className="mb-2">
+                  <strong>Amplified Reach:</strong> After the countdown, suggested hashtags and user IDs will be amplified 5X on Twitter, reaching a larger audience.
+                </li>
+                <li className="mb-2">
+                  <strong>Multimedia Support:</strong> Users can upload images, tag live users, and add hashtags to their suggested tweets.
+                </li>
+              </ul>
+            </div>
+            <div className="bg-white text-black p-4 rounded-lg shadow-md mt-4 ">
+              <h3 className="text-xl font-semibold mb-2">Benefits</h3>
+              <ul className="list-disc list-inside">
+                <li className="mb-2">
+                  WebTweets can be used to manage online platforms by automating tweets, helping you gain followers and likes on your platforms effortlessly.
+                </li>
+              </ul>
+            </div>
           </section>
+
           <section className="mb-4 lg:mb-8">
             <h2 className="text-2xl font-bold mb-4">Suggested Hashtags</h2>
             <div className="flex flex-wrap gap-2">
@@ -173,10 +189,13 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
               {liveUsers.map((liveUser) => (
                 <div
                   key={liveUser.username}
-                  className={`p-4 flex items-center bg-gray-800 rounded mb-4 cursor-pointer ${selectedLiveUsers.includes(liveUser.username) ? 'bg-blue-600' : ''}`}
+                  className={`relative p-1 flex items-center bg-gray-800 rounded mb-2 cursor-pointer ${selectedLiveUsers.includes(liveUser.username) ? 'bg-blue-600' : ''}`}
                   onClick={() => toggleLiveUserSelection(liveUser.username)}
                 >
-                  <img src={liveUser.profileImageUrl} alt={liveUser.username} className="w-12 h-12 rounded-full" />
+                  <div className="relative">
+                    <img src={liveUser.profileImageUrl} alt={liveUser.username} className="w-10 h-10 rounded-full" />
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-gray-800 rounded-full"></span>
+                  </div>
                   <span className="ml-4 font-semibold">{liveUser.username}</span>
                 </div>
               ))}

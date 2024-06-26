@@ -38,7 +38,7 @@ const Dashboard: React.FC = () => {
         const username = params.get('username');
         const displayName = params.get('displayName');
         const profileImageUrl = params.get('profileImageUrl');
-
+   
         if (username) {
             setUser({
                 username,
@@ -140,6 +140,8 @@ const Dashboard: React.FC = () => {
         switch (currentSection) {
             case 'home':
                 return <HomePage user={user} pastTweets={pastTweets} liveUsers={liveUsers} timeLeft={timeLeft} />;
+            case 'create project' :
+                return <div>Create Project</div>
             case 'projects':
                 return <div>Projects Section</div>;
             case 'settings':
