@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   username: string | undefined;
@@ -14,7 +13,6 @@ const Header: React.FC<HeaderProps> = ({ username, profileImageUrl, onLogout }) 
   const handleToggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
-const navigate =  useNavigate();
 
   return (
     <header className="flex items-center justify-between bg-gradient-to-r from-purple-500 to-blue-500 p-4 text-white relative">

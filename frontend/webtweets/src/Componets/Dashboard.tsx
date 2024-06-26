@@ -7,13 +7,6 @@ import { useUser } from '../Componets/Context';
 import BadgeList from './BagdeList'; // Ensure the correct import
 import HomePage from './HomePage'; // Import HomePage component
 
-interface User {
-    username: string;
-    displayName?: string;
-    profileImageUrl?: string | null; // Allow null
-    badges: { id: string; name: string; duration: string }[];
-}
-
 interface Badge {
     id: string;
     name: string;
