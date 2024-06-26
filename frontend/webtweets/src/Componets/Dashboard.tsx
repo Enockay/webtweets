@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useUser } from '../Componets/Context';
 import BadgeList from './BagdeList'; // Ensure the correct import
 import HomePage from './HomePage'; // Import HomePage component
+import { ClipLoader } from 'react-spinners';
 
 interface Badge {
     id: string;
@@ -21,6 +22,7 @@ interface LiveUser {
 }
 
 const Dashboard: React.FC = () => {
+    const [loading, setLoading] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
     const [liveUsers, setLiveUsers] = useState<LiveUser[]>([]);
     const [pastTweets, setPastTweets] = useState<{ id: string; content: string }[]>([]);
@@ -57,19 +59,22 @@ const Dashboard: React.FC = () => {
 
     useEffect(() => {
         const fetchData = async () => {
+            setLoading(true);
             try {
-                const liveUsersResponse = await fetch('http://localhost:3000/api/live-users', {
+                const liveUsersResponse = await fetch('https://webtweets-dawn-forest-2637.fly.dev/api/live-users', {
                     credentials: 'include',
                 });
                 const liveUsersData = await liveUsersResponse.json();
                 setLiveUsers(liveUsersData);
 
-                const pastTweetsResponse = await fetch('http://localhost:3000/api/past-tweets', {
+                const pastTweetsResponse = await fetch('https://webtweets-dawn-forest-2637.fly.dev/api/past-tweets', {
                     credentials: 'include',
                 });
                 const pastTweetsData = await pastTweetsResponse.json();
                 setPastTweets(pastTweetsData);
+                setLoading(false);
             } catch (error) {
+                setLoading(false);
                 console.error('Error fetching data:', error);
             }
         };
@@ -101,12 +106,21 @@ const Dashboard: React.FC = () => {
     }, []);
 
     const handleLogout = async () => {
-        await fetch('/api/logout', {
+    setLoading(true);
+     const logoutUser = await fetch('https://webtweets-dawn-forest-2637.fly.dev/auth/logout', {
             method: 'POST',
+            headers:{
+                "Content-Type":"application/json"
+            },
             credentials: 'include',
+            body :JSON.stringify(user)
         });
+     const response = await logoutUser.json();
+     console.log(response);
+     if(response.success){
         navigate("/login");
         setUser(null);
+     }  
     };
 
     const openModal = (badge: Badge) => {
@@ -138,13 +152,15 @@ const Dashboard: React.FC = () => {
     };
 
     return (
-        <div className="flex flex-col lg:flex-row min-h-screen bg-gray-900 text-white">
+        <div className=' bg-gray-900'>
+         <center>{loading && <ClipLoader size={30} color={"#ffffff"} loading={loading} />}</center>  
+        <div className="flex flex-col lg:flex-row min-h-screen text-white">
           <Sidebar onSectionChange={setCurrentSection} />
           <div className="flex-1 lg:p-8 lg:ml-64 mb-10">
             {user && (
               <Header
                 username={user.username}
-                profileImageUrl={user.profileImageUrl || undefined} // Ensure profileImageUrl is not null
+                profileImageUrl={user.profileImageUrl || undefined} 
                 onLogout={handleLogout}
               />
             )}
@@ -156,6 +172,7 @@ const Dashboard: React.FC = () => {
               />
             )}
           </div>
+        </div>
         </div>
     );
 };

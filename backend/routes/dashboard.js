@@ -21,7 +21,8 @@ router.get('/user', async (req, res) => {
 // Fetch live users
 router.get('/live-users', async (req, res) => {
   try {
-    const liveUsers = await User.find({ isLive: true }).select('username profileImageUrl');
+    const liveUsers = await User.find({ isLive: true}).select('username profileImageUrl');
+    //console.log(liveUsers)
     res.json(liveUsers);
   } catch (error) {
     res.status(500).json({ message: 'Server error', error });

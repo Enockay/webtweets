@@ -18,6 +18,8 @@ passport.use(new LocalStrategy(
       if (!isMatch) {
         return done(null, false, { message: 'Incorrect password.' });
       }
+      user.isLive = true;
+      await user.save();
       return done(null, user);
     } catch (err) {
       return done(err);
@@ -29,7 +31,7 @@ passport.use(new LocalStrategy(
 passport.use(new TwitterStrategy({
   consumerKey: process.env.TWITTER_CONSUMER_KEY,
   consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-  callbackURL: process.env.TWITTER_CALLBACK_URL || "https://webtweets.fly.dev/auth/twitter/callback"
+  callbackURL: process.env.TWITTER_CALLBACK_URL || "https://webtweets-dawn-forest-2637.fly.dev/auth/twitter/callback"
 },
 async (token, tokenSecret, profile, done) => {
   try {
@@ -41,15 +43,18 @@ async (token, tokenSecret, profile, done) => {
         displayName: profile.displayName,
         profileImageUrl: profile.photos[0]?.value
       });
+      user.isLive = true
       await user.save();
     }
+    user.isLive = true;
+    await user.save();
     return done(null, user);
   } catch (err) {
     return done(err, null);
   }
 }));
 
-// Serialization and Deserialization of User
+// Serialization and Deialization of User
 passport.serializeUser((user, done) => {
   try{
     console.log(user);

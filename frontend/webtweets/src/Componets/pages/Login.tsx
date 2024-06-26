@@ -16,7 +16,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('https://webtweets-dawn-forest-2637.fly.dev/auth/login', {
+      const response = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -39,7 +39,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-blue-700 p-4 sm:p-6 lg:p-8">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
+      <div className=" fixed  max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
         <h2 className="text-3xl font-extrabold text-center text-gray-900">Webtweets Login</h2>
         <p className="text-center text-gray-600">Please enter your login and your password</p>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>

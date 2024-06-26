@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User'); // Assuming User model is defined in '../models/User'
 const router = express.Router();
 
+router.get('/twitter', passport.authenticate('twitter'));
+
 router.get('/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/' }),
   (req, res) => {
@@ -13,8 +15,26 @@ router.get('/twitter/callback',
     res.redirect(`https://webtweets.vercel.app/Dashboard?username=${username}&displayName=${displayName}&profileImageUrl=${profileImageUrl}`);
   }
 );
+router.post('/logout', async (req, res) => { 
+  try {
+    const user = req.body; // Assuming user details are sent in the body
+    const query = { username: user.username };
 
-// Manual login route
+    // Correctly updating the isLive field
+    const logoutUser = await User.findOneAndUpdate(query, { isLive: false }, { new: true });
+    
+    if (!logoutUser) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    //console.log(logoutUser);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Internal server error in logging out users:", error);
+    res.status(500).json({ success: false, message: "Internal server error in logging out users" });
+  }
+});
+
 router.post('/login', passport.authenticate('local'), async (req, res) => {
   try {
     // If authentication is successful, `req.user` contains authenticated user

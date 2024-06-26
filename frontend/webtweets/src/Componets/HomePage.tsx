@@ -111,7 +111,7 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
                   </div>
                 </div>
               </div>
-              <textarea
+              <input
                 value={suggestedTweet}
                 onChange={(e) => setSuggestedTweet(e.target.value)}
                 className="w-full p-2 border rounded text-black bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -165,7 +165,7 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
             </div>
           </section>
         </div>
-        <div>
+        <div className='max-h-screen overflow-y-auto scrollbar-hide border-'>
           <Countdown timeLeft={timeLeft} />
           <section className="mt-8">
             <h2 className="text-2xl font-bold mb-4">Live Users</h2>

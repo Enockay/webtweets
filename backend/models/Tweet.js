@@ -7,7 +7,7 @@ const tweetSchema = new Schema({
     required: true
   },
   suggestedBy: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: 'User',
     required: true
   },
