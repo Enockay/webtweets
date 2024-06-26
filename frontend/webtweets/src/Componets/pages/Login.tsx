@@ -16,7 +16,7 @@ const Login: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:3000/auth/login', {
+      const response = await fetch('https://webtweets-dawn-forest-2637.fly.dev/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -78,7 +78,7 @@ const Login: React.FC = () => {
           <div className="flex items-center justify-center mt-4">
             <FaTwitter className="mr-2 text-blue-500" />
             <a
-              href="https://webtweets.fly.dev/auth/twitter"
+              href="https://webtweets-dawn-forest-2637.fly.dev/auth/twitter"
               className="text-sm font-medium text-blue-500 hover:underline"
             >
               Login with Twitter

@@ -11,7 +11,7 @@ const SignUp: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3000/auth/signup', {
+      const response = await fetch('https://webtweets-dawn-forest-2637.fly.dev/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, email, password })
@@ -75,7 +75,7 @@ const SignUp: React.FC = () => {
           <div className="flex items-center justify-center mt-4">
             <FaTwitter className="mr-2 text-blue-500" />
             <a
-              href="http://localhost:3000/auth/twitter"
+              href="https://webtweets-dawn-forest-2637.fly.dev/auth/twitter"
               className="text-sm font-medium text-blue-500 hover:underline"
             >
               Sign Up with Twitter

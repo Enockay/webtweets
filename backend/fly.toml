@@ -1,7 +1,16 @@
-app = "webtweets"
-primary_region = "jnb"
+# fly.toml app configuration file generated for webtweets-dawn-forest-2637 on 2024-06-26T09:10:17+03:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'webtweets-dawn-forest-2637'
+primary_region = 'jnb'
 
 [build]
+
+[env]
+  MONGO_URI = 'mongodb+srv://myAtlasDBUser:Enockay23@bmgpfws.bfx6ekr.mongodb.net/Webtweets?retryWrites=true&w=majority'
+  PORT = '3000'
 
 [http_service]
   internal_port = 3000
@@ -9,17 +18,9 @@ primary_region = "jnb"
   auto_stop_machines = true
   auto_start_machines = true
   min_machines_running = 0
-  processes = ["app"]
+  processes = ['app']
 
 [[vm]]
-  memory = "2gb"
-  cpu_kind = "shared"
+  memory = '2gb'
+  cpu_kind = 'shared'
   cpus = 1
-
-[env]
-  MONGO_URI = "mongodb+srv://myAtlasDBUser:Enockay23@bmgpfws.bfx6ekr.mongodb.net/Webtweets?retryWrites=true&w=majority"
-  TWITTER_CONSUMER_KEY = "DuI1E9EOIjOccqN1zdTDPPPGc"
-  TWITTER_CONSUMER_SECRET = "XFyhrdTvYZwJwXss5JVKWtCuALpMiJdW5PUyksGOlu3BlNV5KM"
-  TWITTER_ACCESS_TOKEN_KEY = "1538054684497387521-zU2mRNrWdBFy9smTGY3miVYrky64yT"
-  TWITTER_ACCESS_TOKEN_SECRET = "z84AQZjCqshkeAKRiKJ7dGVUe8vT0pynqlQjREygMvHSJ"
-  PORT = "3000"

@@ -37,6 +37,9 @@ FROM base
 # Copy built application
 COPY --from=build /app /app
 
+# Ensure bin/www has execute permissions
+RUN chmod +x /app/bin/www
+
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
-CMD [ "node", "app.js" ]
+CMD [ "node", "bin/www" ]
