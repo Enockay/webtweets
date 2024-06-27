@@ -7,6 +7,7 @@ import { useUser } from '../Componets/Context';
 import BadgeList from './BagdeList'; // Ensure the correct import
 import HomePage from './HomePage'; // Import HomePage component
 import { ClipLoader } from 'react-spinners';
+import CreateProject from './CreateProject';
 
 interface Badge {
     id: string;
@@ -141,7 +142,7 @@ const Dashboard: React.FC = () => {
             case 'home':
                 return <HomePage user={user} pastTweets={pastTweets} liveUsers={liveUsers} timeLeft={timeLeft} />;
             case 'create project' :
-                return <div>Create Project</div>
+                return <CreateProject/>
             case 'projects':
                 return <div>Projects Section</div>;
             case 'settings':
