@@ -38,10 +38,10 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-900 p-4 sm:p-6 lg:p-8">
-      <div className=" fixed  max-w-md p-8 space-y-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-3xl font-extrabold text-center text-gray-900">Webtweets Login</h2>
-        <p className="text-center text-gray-600">Please enter your login and your password</p>
+    <div className="flex items-center justify-center min-h-screen  bg-slate-500 p-4 sm:p-6 lg:p-8">
+      <div className=" fixed  max-w-md p-8 space-y-8 bg-gray-900 rounded-lg shadow-lg">
+        <h4 className="text-xl font-extrabold text-center text-lime-400">Webtweets Login</h4>
+        <p className="text-center text-green-400">Please enter your login and your password</p>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -79,13 +79,13 @@ const Login: React.FC = () => {
             <FaTwitter className="mr-2 text-blue-500" />
             <a
               href="https://webtweets-dawn-forest-2637.fly.dev/auth/twitter"
-              className="text-sm font-medium text-blue-500 hover:underline"
+              className="text-sm font-medium text-green-400 hover:underline"
             >
               Login with Twitter
             </a>
           </div>
           <div className="flex items-center justify-center mt-4">
-            <p className="text-sm text-gray-600">Don't have an account?</p>
+            <p className="text-sm text-lime-400">Don't have an account?</p>
             <Link
               to="/signup"
               className="ml-2 text-sm font-medium text-blue-500 hover:underline"

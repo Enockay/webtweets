@@ -19,7 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onSectionChange }) => {
               </button>
             </li>
             <li className="mb-6">
-              <button onClick={() => onSectionChange('projects')} className="flex items-center text-white w-full">
+              <button onClick={() => onSectionChange('create project')} className="flex items-center text-white w-full">
                 <FaFolderPlus className="mr-2" /> create project
               </button>
             </li>
@@ -55,6 +55,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onSectionChange }) => {
         </button>
         <button onClick={() => onSectionChange('badges')} className="text-white">
           <FaShoppingCart size={24} />
+        </button>
+        <button onClick={() => onSectionChange('create project')} className="text-white">
+          <FaFolderPlus size={24} />
         </button>
       </div>
     </div>

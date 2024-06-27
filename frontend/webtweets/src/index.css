@@ -19,4 +19,11 @@
     position: relative;
     padding-top: 100px;
   }
+
+  @media (min-width: 1024px) {
+    .lg\\:order-last {
+      order: 3;
+    }
+  }
+  
   

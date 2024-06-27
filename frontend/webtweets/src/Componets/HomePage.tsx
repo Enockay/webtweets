@@ -70,15 +70,41 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
   return (
     <div className="container mx-auto p-4 lg:p-8 bg-gray-900 text-white rounded-lg shadow-lg">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-8 mt-4 lg:mt-8">
+        {/* Live Users Section */}
+        <div className="lg:order-last lg:col-span-1 lg:max-h-screen lg:overflow-y-auto lg:scrollbar-hide">
+          <Countdown timeLeft={timeLeft} />
+          <section className="mt-8 lg:mt-0">
+            <h4 className="text-xl font-bold mb-4">Live Users</h4>
+            <div className="flex mt-4 bg-emerald-400 rounded p-1">
+              {liveUsers.map((liveUser, index) => (
+                <div
+                  key={liveUser.username}
+                  className={`relative flex-shrink-0 w-12 h-12 bg-gray-800 rounded-full border-2 border-gray-900 ${selectedLiveUsers.includes(liveUser.username) ? 'bg-blue-600' : ''}`}
+                  style={{ marginLeft: index === 0 ? '0' : '-10px' }}
+                  onClick={() => toggleLiveUserSelection(liveUser.username)}
+                >
+                  <img
+                    src={liveUser.profileImageUrl}
+                    alt={liveUser.username}
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-gray-800 rounded-full"></span>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        {/* Main Content Section */}
         <div className="lg:col-span-2 h-screen overflow-y-auto scrollbar-hide">
           <section className="mb-4 lg:mb-8">
-            <h2 className="text-xl font-bold mb-4 text-red-400">Badges</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <h3 className=" font-bold mb-4 text-red-400">Badges</h3>
+            <div className="max-w-96 ">
               <BadgeCard badgeIds={user?.badges || []} />
             </div>
           </section>
           <section className="mb-4 lg:mb-8">
-            <h2 className="text-2xl font-bold mb-4">Suggest a Tweet</h2>
+            <h4 className="text-xl font-bold mb-4 text-green-600">Suggest a Tweet</h4>
             <div className="relative flex items-center">
               <div className="relative group">
                 <button className="text-blue-500 mr-2">@</button>
@@ -130,37 +156,8 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
               </div>
             )}
           </section>
-          <section className="mb-4 lg:mb-8 p-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg shadow-lg text-white max-h-96 overflow-y-auto scrollbar-hide">
-            <h4 className="text-xl font-bold mb-4">How WebTweets Works</h4>
-            <div className="bg-white text-black p-4 rounded-lg shadow-md ">
-              <h3 className="text-xl font-semibold mb-2">Key Features</h3>
-              <ul className="list-disc list-inside">
-                <li className="mb-2">
-                  <strong>Suggest Tweets:</strong> WebTweets allows users to suggest tweets, tag other live users, and use hashtags to increase the visibility of their tweets.
-                </li>
-                <li className="mb-2">
-                  <strong>Badge System:</strong> We charge for badges to cover the cost of API access from Twitter, which is $5000 per month.
-                </li>
-                <li className="mb-2">
-                  <strong>Amplified Reach:</strong> After the countdown, suggested hashtags and user IDs will be amplified 5X on Twitter, reaching a larger audience.
-                </li>
-                <li className="mb-2">
-                  <strong>Multimedia Support:</strong> Users can upload images, tag live users, and add hashtags to their suggested tweets.
-                </li>
-              </ul>
-            </div>
-            <div className="bg-white text-black p-4 rounded-lg shadow-md mt-4 ">
-              <h3 className="text-xl font-semibold mb-2">Benefits</h3>
-              <ul className="list-disc list-inside">
-                <li className="mb-2">
-                  WebTweets can be used to manage online platforms by automating tweets, helping you gain followers and likes on your platforms effortlessly.
-                </li>
-              </ul>
-            </div>
-          </section>
-
           <section className="mb-4 lg:mb-8">
-            <h2 className="text-2xl font-bold mb-4">Suggested Hashtags</h2>
+            <h4 className="text-xl font-bold mb-4">Suggested Hashtags</h4>
             <div className="flex flex-wrap gap-2">
               {userSuggestedHashtags.map((tag, index) => (
                 <span key={index} className="inline-block bg-green-600 text-white rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">
@@ -171,7 +168,7 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
             <p className="text-sm text-gray-400 mt-2">These hashtags will be amplified in the next hour.</p>
           </section>
           <section className="mb-4 lg:mb-8">
-            <h2 className="text-2xl font-bold mb-4">Past Amplified Tweets</h2>
+            <h4 className="text-xl font-bold mb-4">Past Amplified Tweets</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {pastTweets.map((tweet) => (
                 <div key={tweet.id} className="p-4 bg-gray-800 rounded shadow">
@@ -180,25 +177,41 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
               ))}
             </div>
           </section>
-        </div>
-        <div className='max-h-screen overflow-y-auto scrollbar-hide border-'>
-          <Countdown timeLeft={timeLeft} />
-          <section className="mt-8">
-            <h2 className="text-2xl font-bold mb-4">Live Users</h2>
-            <div className="overflow-y-auto max-h-80 mt-4 border border-gray-700 rounded-lg">
-              {liveUsers.map((liveUser) => (
-                <div
-                  key={liveUser.username}
-                  className={`relative p-1 flex items-center bg-gray-800 rounded mb-2 cursor-pointer ${selectedLiveUsers.includes(liveUser.username) ? 'bg-blue-600' : ''}`}
-                  onClick={() => toggleLiveUserSelection(liveUser.username)}
-                >
-                  <div className="relative">
-                    <img src={liveUser.profileImageUrl} alt={liveUser.username} className="w-10 h-10 rounded-full" />
-                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-gray-800 rounded-full"></span>
-                  </div>
-                  <span className="ml-4 font-semibold">{liveUser.username}</span>
-                </div>
-              ))}
+          <section className="mb-4 lg:mb-8 p-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg shadow-lg text-white max-h-96 overflow-y-auto scrollbar-hide md:h-screen">
+            <h4 className="text-xl font-bold mb-4">How WebTweets Works</h4>
+            <div className="bg-white text-black p-4 rounded-lg shadow-md ">
+              <h3 className="text-xl font-semibold mb-2">Key Features</h3>
+              <ul className="list-disc list-inside">
+                <li className="mb-2">
+                  <strong>Suggest Tweets:</strong> WebTweets allows users to suggest tweets, tag other live users, and use hashtags to increase the visibility of their tweets.
+                </li>
+                <li className="mb-2">
+                  <strong>Upload Images:</strong> Users can upload images to be included in their suggested tweets.
+                </li>
+                <li className="mb-2">
+                  <strong>ChatGPT Suggestions:</strong> WebTweets can provide tweet suggestions based on user input, using AI-powered ChatGPT.
+                </li>
+              </ul>
+            </div>
+            <div className="bg-white text-black p-4 rounded-lg shadow-md mt-4">
+              <h3 className="text-xl font-semibold mb-2">About WebTweets</h3>
+              <ul className="list-disc list-inside">
+                <li className="mb-2">
+                  WebTweets is designed to help users get their tweets noticed, particularly those from underrepresented communities and voices.
+                </li>
+                <li className="mb-2">
+                  By amplifying suggested hashtags and user IDs, WebTweets can help raise awareness about important issues and causes.
+                </li>
+                <li className="mb-2">
+                  Our platform provides a space for users to connect and collaborate, making it easier to amplify important messages.
+                </li>
+              </ul>
+            </div>
+            <div className="bg-white text-black p-4 rounded-lg shadow-md mt-4">
+              <h3 className="text-xl font-semibold mb-2">Conclusion</h3>
+              <p>
+                WebTweets is committed to providing a platform that amplifies underrepresented voices and helps users get their messages heard. By using WebTweets, you can suggest tweets, tag live users, and use hashtags to increase the visibility of your tweets. Join us today and be a part of the WebTweets community!
+              </p>
             </div>
           </section>
         </div>

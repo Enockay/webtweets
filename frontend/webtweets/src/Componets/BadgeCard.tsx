@@ -64,12 +64,12 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ badgeIds }) => {
 
   return (
     <div className="container mx-auto">
-      <div className="flex overflow-x-auto gap-4 py-1">
+      <div className="flex overflow-x-auto scrollbar-hide gap-2 py-1">
         {message && <center className='text-green-300'>{message}</center>}
         {badges.map((badge, index) => (
           <div
             key={badge.id}
-            className={`relative p-4 rounded-full shadow-lg flex flex-col items-center justify-center w-20 h-20 cursor-pointer 
+            className={`relative p-5 rounded-full shadow-lg flex flex-col items-center justify-center w-20 h-20 cursor-pointer 
               ${index % 3 === 0 ? 'bg-gradient-to-r from-purple-500 to-pink-500' : ''}
               ${index % 3 === 1 ? 'bg-gradient-to-r from-blue-500 to-green-500' : ''}
               ${index % 3 === 2 ? 'bg-gradient-to-r from-red-500 to-yellow-500' : ''}
