@@ -1,10 +1,10 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
 interface SocialMedia {
-  username: string;
+  username: string | undefined;
   followers: number;
   likes: number;
-  profileImageUrl: string;
+  profileImageUrl: string | undefined;
 }
 
 interface User {
@@ -17,11 +17,12 @@ interface User {
   password: string;
   username: string;
   displayName?: string;
-  __v: number;
-  _id: string;
   twitter?: SocialMedia;
   tiktok?: SocialMedia;
   instagram?: SocialMedia;
+  __v: number;
+  _id: string;
+  
 }
 
 interface UserContextType {
