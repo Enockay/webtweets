@@ -4,7 +4,6 @@ import {
 } from 'recharts';
 
 const Analytics: React.FC = () => {
-    // Dummy data for demonstration
     const likesData = [
         { name: 'Jan', likes: 400 },
         { name: 'Feb', likes: 300 },
@@ -49,6 +48,7 @@ const Analytics: React.FC = () => {
         { name: '55+', value: 100 },
     ];
 
+    
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
     return (
@@ -111,9 +111,16 @@ const Analytics: React.FC = () => {
                             fill="#8884d8"
                             label
                         >
-                            {demographicData.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
+                            {demographicData.map((entry, index) => {
+                                console.log(entry); // Log each entry to check values
+                                return (
+                                    <Cell
+                                        key={`cell-${index}`}
+                                        fill={COLORS[index % COLORS.length]}
+                                        // You can add more properties from entry if needed
+                                    />
+                                );
+                            })}
                         </Pie>
                         <Tooltip />
                     </PieChart>

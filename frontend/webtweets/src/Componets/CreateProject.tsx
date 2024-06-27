@@ -14,7 +14,7 @@ const CreateProject: React.FC = () => {
         twitter: false,
     });
     const [loading, setLoading] = useState(false);
-    const { user, setUser } = useUser();
+    const { user} = useUser();
     const navigate = useNavigate();
 
     useEffect(() => {
