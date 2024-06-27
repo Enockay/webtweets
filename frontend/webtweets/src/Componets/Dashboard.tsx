@@ -8,15 +8,18 @@ import BadgeList from './BagdeList'; // Ensure the correct import
 import HomePage from './HomePage'; // Import HomePage component
 import { ClipLoader } from 'react-spinners';
 import CreateProject from './CreateProject';
+import Profile from './Profile';
 
 interface Badge {
     id: string;
     name: string;
     duration: string;
     description: string;
-    price: string;
-}
-
+    priceKsh: string;
+    priceUsd: string;
+    benefits: string[];
+  }
+  
 interface LiveUser {
     username: string;
     profileImageUrl: string;
@@ -130,13 +133,83 @@ const Dashboard: React.FC = () => {
     };
 
     const badgeOptions: Badge[] = [
-        { id: '1', name: '1 Hour Badge', duration: '1 hour', description: 'This badge gives you 1 hour of extra features.', price: 'ksh 15' },
-        { id: '2', name: '2 Hours Badge', duration: '2 hours', description: 'This badge gives you 2 hours of extra features.', price: 'ksh 25' },
-        { id: '3', name: '3 Hours Badge', duration: '3 hours', description: 'This badge gives you 2.5 hours of extra features.', price: 'ksh 30' },
-        { id: '4', name: '5 Hours Badge', duration: '5 hours', description: 'This badge gives you 5 hours of extra features.', price: 'ksh 50' },
-        { id: '5', name: '10 Hours Badge', duration: '10 hours', description: 'This badge gives you 10 hours of extra features.', price: 'ksh 60' },
-    ];
-
+        {
+          id: '1',
+          name: 'Monthly Badge',
+          duration: '1 month',
+          description: 'This badge gives you 1 month of extra features.',
+          priceKsh: 'Ksh 1500',
+          priceUsd: '$15',
+          benefits: [
+            'Detailed report and analysis of your online activity.',
+            'Access to automatic scheduling of tweets and posts.',
+            'USSD link access to your account.',
+            'Tips on how to increase your online popularity.',
+            'Priority customer support.'
+          ]
+        },
+        {
+          id: '2',
+          name: 'Quarterly Badge',
+          duration: '3 months',
+          description: 'This badge gives you 3 months of extra features.',
+          priceKsh: 'Ksh 4000',
+          priceUsd: '$40',
+          benefits: [
+            'Detailed report and analysis of your online activity.',
+            'Access to automatic scheduling of tweets and posts.',
+            'USSD link access to your account.',
+            'Tips on how to increase your online popularity.',
+            'Priority customer support.'
+          ]
+        },
+        {
+          id: '3',
+          name: 'Half-Year Badge',
+          duration: '6 months',
+          description: 'This badge gives you 6 months of extra features.',
+          priceKsh: 'Ksh 7500',
+          priceUsd: '$75',
+          benefits: [
+            'Detailed report and analysis of your online activity.',
+            'Access to automatic scheduling of tweets and posts.',
+            'USSD link access to your account.',
+            'Tips on how to increase your online popularity.',
+            'Priority customer support.'
+          ]
+        },
+        {
+          id: '4',
+          name: 'Yearly Badge',
+          duration: '1 year',
+          description: 'This badge gives you 1 year of extra features.',
+          priceKsh: 'Ksh 14000',
+          priceUsd: '$140',
+          benefits: [
+            'Detailed report and analysis of your online activity.',
+            'Access to automatic scheduling of tweets and posts.',
+            'USSD link access to your account.',
+            'Tips on how to increase your online popularity.',
+            'Priority customer support.'
+          ]
+        },
+        {
+          id: '5',
+          name: 'Weekly Badge',
+          duration: '1 week',
+          description: 'This badge gives you 1 week of extra features.',
+          priceKsh: 'Ksh 500',
+          priceUsd: '$5',
+          benefits: [
+            'Detailed report and analysis of your online activity.',
+            'Access to automatic scheduling of tweets and posts.',
+            'USSD link access to your account.',
+            'Tips on how to increase your online popularity.',
+            'Priority customer support.'
+          ]
+        }
+      ];
+      
     const renderSection = () => {
         switch (currentSection) {
             case 'home':

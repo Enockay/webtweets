@@ -5,6 +5,7 @@ import BadgeCard from './BadgeCard';
 import { AiOutlineFileImage } from 'react-icons/ai';
 import { FaRetweet } from 'react-icons/fa';
 import { BsArrowRightShort } from 'react-icons/bs';
+import Profile from './Profile';
 
 interface User {
   username: string;
@@ -35,6 +36,7 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
   const [selectedLiveUsers, setSelectedLiveUsers] = useState<string[]>([]);
   const [userSuggestedHashtags, setUserSuggestedHashtags] = useState<string[]>([]);
   const [chatGptResponse, setChatGptResponse] = useState<string>('');
+  const [isProfileVisible, setIsProfileVisible] = useState(false);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -92,14 +94,30 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
                 </div>
               ))}
             </div>
+            {/* Toggle Profile Button */}
+
           </section>
+          <div>
+            {/* Toggle Profile Button (visible only on small screens) */}
+            <button
+              onClick={() => setIsProfileVisible(!isProfileVisible)}
+              className="mt-4 bg-blue-600 text-white rounded p-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:hidden"
+            >
+              {isProfileVisible ? 'Hide Profile' : 'View Profile'}
+            </button>
+
+            {/* Profile Component (always visible on large screens, toggleable on small screens) */}
+            <div className={`mt-4 ${isProfileVisible ? 'block' : 'hidden'} lg:block`}>
+              <Profile />
+            </div>
+          </div>
         </div>
 
         {/* Main Content Section */}
         <div className="lg:col-span-2 h-screen overflow-y-auto scrollbar-hide">
           <section className="mb-4 lg:mb-8">
-            <h3 className=" font-bold mb-4 text-red-400">Badges</h3>
-            <div className="max-w-96 ">
+            <h3 className="font-bold mb-4 text-red-400">Badges</h3>
+            <div className="max-w-96">
               <BadgeCard badgeIds={user?.badges || []} />
             </div>
           </section>
@@ -179,7 +197,7 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
           </section>
           <section className="mb-4 lg:mb-8 p-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg shadow-lg text-white max-h-96 overflow-y-auto scrollbar-hide md:h-screen">
             <h4 className="text-xl font-bold mb-4">How WebTweets Works</h4>
-            <div className="bg-white text-black p-4 rounded-lg shadow-md ">
+            <div className="bg-white text-black p-4 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold mb-2">Key Features</h3>
               <ul className="list-disc list-inside">
                 <li className="mb-2">

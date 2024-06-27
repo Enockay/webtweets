@@ -17,6 +17,8 @@ interface User {
 interface UserContextType {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  paymentMethod: 'paypal' | 'mpesa' | null;
+  setPaymentMethod: React.Dispatch<React.SetStateAction<'paypal' | 'mpesa' | null>>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -27,6 +29,8 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
+  const [paymentMethod, setPaymentMethod] = useState<'paypal' | 'mpesa' | null>(null);
+
   useEffect(() => {
     if (user) {
       localStorage.setItem('user', JSON.stringify(user));
@@ -36,7 +40,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [user]);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, paymentMethod, setPaymentMethod }}>
       {children}
     </UserContext.Provider>
   );

@@ -8,7 +8,9 @@ interface Badge {
   name: string;
   duration: string;
   description: string;
-  price: string;
+  priceKsh: string;
+  priceUsd: string;
+  benefits: string[];
 }
 
 interface BadgePurchaseModalProps {
@@ -20,7 +22,7 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
   const [phoneNumber, setPhoneNumber] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const { user} = useUser();
+  const { user, paymentMethod } = useUser();
 
   const handlePurchase = async () => {
     if (!user) {
@@ -32,10 +34,11 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
       setLoading(true);
       const response = await axios.post('https://webtweets-dawn-forest-2637.fly.dev/badges/purchase', {
         duration: badge.duration,
-        phoneNumber,
+        phoneNumber: paymentMethod === 'mpesa' ? phoneNumber : null,
         description: badge.description,
-        price: badge.price,
-        user:user.username
+        price: paymentMethod === 'paypal' ? badge.priceUsd : badge.priceKsh,
+        user: user.username,
+        paymentMethod
       });
       if (response.data.success) {
         setMessage('Successfully purchased the badge.');
@@ -52,16 +55,28 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
       <div className="bg-gray-800 p-8 rounded shadow-lg w-80">
-        <h2 className="text-xl font-semibold mb-4">Purchase {badge.name}</h2>
+        <h4 className="text-xl font-semibold mb-4">Purchase {badge.name}</h4>
         <p className="text-yellow-100 mb-2">{badge.description}</p>
-        <p className="text-yellow-100 mb-4 font-bold">Price: {badge.price}</p>
-        <input
-          type="text"
-          value={phoneNumber}
-          onChange={(e) => setPhoneNumber(e.target.value)}
-          placeholder="Enter M-Pesa number"
-          className="w-full p-2 mb-4 border rounded text-black"
-        />
+        <p className="text-yellow-100 mb-4 font-bold">
+          Price: {paymentMethod === 'paypal' ? badge.priceUsd : badge.priceKsh}
+        </p>
+        <div className="text-yellow-100 mb-4">
+          <h5 className="font-bold">Badge Benefits:</h5>
+          <ul className="list-disc list-inside">
+            {badge.benefits.map((benefit, index) => (
+              <li key={index}>{benefit}</li>
+            ))}
+          </ul>
+        </div>
+        {paymentMethod === 'mpesa' && (
+          <input
+            type="text"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            placeholder="Enter M-Pesa number"
+            className="w-full p-2 mb-4 border rounded text-black"
+          />
+        )}
         <button
           onClick={handlePurchase}
           className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center justify-center"
@@ -76,7 +91,7 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
           Cancel
         </button>
         {message && (
-          <div className={`mt-4 p-2 rounded text-center ${message.includes('success') ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+          <div className={`mt-4 p-2 rounded text-center ${message.includes('Successfully') ? 'bg-green-500' : 'bg-red-500'} text-white`}>
             {message}
           </div>
         )}

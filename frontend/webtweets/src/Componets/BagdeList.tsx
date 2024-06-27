@@ -1,12 +1,16 @@
 import React from 'react';
+import { useUser } from '../Componets/Context';
 
 interface Badge {
   id: string;
   name: string;
-  description: string;
   duration: string;
-  price: string;
+  description: string;
+  priceKsh: string;
+  priceUsd: string;
+  benefits: string[];
 }
+
 
 interface BadgeListProps {
   badgeOptions: Badge[];
@@ -14,34 +18,54 @@ interface BadgeListProps {
 }
 
 const BadgeList: React.FC<BadgeListProps> = ({ badgeOptions, openModal }) => {
+  const { paymentMethod, setPaymentMethod } = useUser();
+
   return (
-    <div className='bg-blue-900'>
-      <h3 className="text-center text-xl text-orange-300 font-semibold m-4">Support Us With Badges</h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 p-4">
-        {badgeOptions.map((badge) => (
-          <div
-            key={badge.id}
-            className="p-4 text-white shadow cursor-pointer transform transition-transform hover:scale-105 flex flex-col items-center"
-            onClick={() => openModal(badge)}
+    <div className="bg-gray-800 min-h-screen p-6">
+      <h4 className="text-center text-xl text-lime-600 font-bold mb-6">Choose Your Affordable Badge</h4>
+      {paymentMethod === null ? (
+        <div className="flex justify-center space-x-4 mb-8">
+          <button
+            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg"
+            onClick={() => setPaymentMethod('paypal')}
           >
-            <div className="relative bg-white text-black rounded-t-lg p-4 flex flex-col items-center w-full">
-              <div className="text-center text-xs font-semibold mb-1">{badge.name}</div>
-              <div className="text-center text-sm text-gray-600">{badge.description}</div>
-            </div>
-            <div className="w-full relative">
-              <div className={`p-2 w-full text-center text-sm mt-2 ${badge.name === 'Easiest To Use' || badge.name === 'Leader' ? 'bg-orange-500' : 'bg-blue-700'}`}>
-                {badge.duration}
-                <div className="bg-yellow-400 p-1 text-center absolute bottom-0 left-1/2 transform -translate-x-1/2 w-12 h-12 text-sm text-black font-bold mt-2 rounded-bl-lg rounded-br-lg">
-                {badge.price}
+            PayPal
+          </button>
+          <button
+            className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg"
+            onClick={() => setPaymentMethod('mpesa')}
+          >
+            MPesa
+          </button>
+        </div>
+      ) : (
+        <div>
+          <button
+            className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg mb-4"
+            onClick={() => setPaymentMethod(null)}
+          >
+            Change Payment Method
+          </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {badgeOptions.map((badge) => (
+              <div
+                key={badge.id}
+                className="p-6 bg-white text-black rounded-lg shadow-lg cursor-pointer transform transition-transform hover:scale-105 flex flex-col items-center"
+                onClick={() => openModal(badge)}
+              >
+                <div className="text-center text-lg font-semibold mb-2">{badge.name}</div>
+                <div className="text-center text-sm text-gray-700 mb-4">{badge.description}</div>
+                <div className="bg-blue-200 w-full text-center p-2 rounded-lg mb-2">
+                  {badge.duration}
+                </div>
+                <div className="bg-yellow-300 p-2 rounded-full text-center w-16 h-16 flex items-center justify-center text-lg font-bold">
+                  {paymentMethod === 'paypal' ? badge.priceUsd : badge.priceKsh}
+                </div>
               </div>
-              </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
-      <center className='text-yellow-400'>
-        <h4>#Our Voices Must Be Heard</h4>
-      </center>
+        </div>
+      )}
     </div>
   );
 };
