@@ -1,5 +1,12 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
+interface SocialMedia {
+  username: string;
+  followers: number;
+  likes: number;
+  profileImageUrl: string;
+}
+
 interface User {
   profileImageUrl: string | undefined;
   badges: any[];
@@ -9,9 +16,12 @@ interface User {
   isLive: boolean;
   password: string;
   username: string;
-  displayName?: string; // Add displayName property
+  displayName?: string;
   __v: number;
   _id: string;
+  twitter?: SocialMedia;
+  tiktok?: SocialMedia;
+  instagram?: SocialMedia;
 }
 
 interface UserContextType {
@@ -19,6 +29,7 @@ interface UserContextType {
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   paymentMethod: 'paypal' | 'mpesa' | null;
   setPaymentMethod: React.Dispatch<React.SetStateAction<'paypal' | 'mpesa' | null>>;
+  updateUser: (updates: Partial<User>) => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -39,8 +50,17 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, [user]);
 
+  const updateUser = (updates: Partial<User>) => {
+    setUser(prevUser => {
+      if (!prevUser) return null;
+      const updatedUser = { ...prevUser, ...updates };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser, paymentMethod, setPaymentMethod }}>
+    <UserContext.Provider value={{ user, setUser, paymentMethod, setPaymentMethod, updateUser }}>
       {children}
     </UserContext.Provider>
   );

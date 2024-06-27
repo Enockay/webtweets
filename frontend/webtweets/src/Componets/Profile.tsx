@@ -1,13 +1,15 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
 import 'chart.js/auto';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTiktok, faTwitter, faInstagram } from '@fortawesome/free-brands-svg-icons';
 
 const Profile: React.FC = () => {
   // Dummy data for likes and followers
   const socialMediaData = [
-    { platform: 'TikTok', likes: 5000, followers: 15000 },
-    { platform: 'Twitter', likes: 2000, followers: 10000 },
-    { platform: 'Instagram', likes: 1000, followers: 5000 },
+    { platform: 'TikTok', likes: 5000, followers: 15000, color: '#69C9D0', icon: faTiktok },
+    { platform: 'Twitter', likes: 2000, followers: 10000, color: '#1DA1F2', icon: faTwitter },
+    { platform: 'Instagram', likes: 1000, followers: 5000, color: '#E4405F', icon: faInstagram },
   ];
 
   // Dummy data for line graph (likes and followers over time)
@@ -50,10 +52,10 @@ const Profile: React.FC = () => {
       <h5 className="text-xl mb-4 text-green-200 font-light">Social Media Statistics</h5>
 
       {/* Social Media Stats */}
-      <div className="md:grid-cols-3 gap-4 mb-8">
+      <div className="">
         {socialMediaData.map((platformData, index) => (
-          <div key={index} className="bg-gray-100 rounded-lg p-1 text-center shadow-sm mb-1" >
-            <h5 className="font-semibold  text-cyan-600 m-0">{platformData.platform}</h5>
+          <div key={index} className="bg-gray-100 rounded-lg p-2 text-center shadow-sm mb-4" style={{ borderColor: platformData.color, borderWidth: 2 }}>
+            <FontAwesomeIcon icon={platformData.icon} size="2x" style={{ color: platformData.color }} />
             <p className="text-gray-600">Likes: <span className="font-bold">{platformData.likes}</span></p>
             <p className="text-gray-600">Followers: <span className="font-bold">{platformData.followers}</span></p>
           </div>
@@ -62,7 +64,7 @@ const Profile: React.FC = () => {
 
       {/* Line Graph */}
       <div className="w-full max-w-screen-lg mx-auto">
-        <h6 className=" font-extralight mb-4 text-green-200">Likes and Followers Over Time</h6>
+        <h6 className="font-extralight mb-4 text-green-200">Likes and Followers Over Time</h6>
         <div className="bg-gray-100 rounded-lg p-4 shadow-sm">
           <div className="relative h-64">
             <Line data={chartData} options={chartOptions} />
