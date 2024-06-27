@@ -80,11 +80,9 @@ const CreateProject: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Create Project</h1>
-            {loading && <ClipLoader size={30} color={"#000000"} loading={loading} />}
-
+            <h1 className="text-2xl  mb-3 text-lime-300 font-light">Create Project</h1>
             <div className="mb-4">
-                <h2 className="text-xl font-semibold">Link Accounts</h2>
+                <h2 className="text-xl font-semibold mb-4">Link Accounts</h2>
                 <div className="flex space-x-4">
                     {!linkedAccounts.tiktok && (
                         <button
@@ -111,11 +109,12 @@ const CreateProject: React.FC = () => {
                         </button>
                     )}
                 </div>
+              <center> {loading && <ClipLoader size={30} color={"#0000FF"} loading={loading} />}</center> 
             </div>
 
-            <div className="mb-4">
+            <div className="mb-4 hidden md:hidden">
                 <button
-                    className="p-2 bg-green-500 text-white rounded"
+                    className="p-2 bg-green-500 text-slate-700 rounded"
                     onClick={handleRequestPermissions}
                 >
                     Request Permissions
@@ -132,32 +131,32 @@ const CreateProject: React.FC = () => {
                 ></textarea>
 
                 <div className="mb-4">
-                    <label className="block mb-2">Schedule Post</label>
+                    <label className="block mb-2">Post Shedule Time</label>
                     <input
                         type="datetime-local"
-                        className="p-2 border rounded w-full"
+                        className="p-2 border rounded w-full text-slate-900"
                         value={scheduledTime}
                         onChange={(e) => setScheduledTime(e.target.value)}
                     />
                 </div>
 
-                <button className="p-2 bg-green-500 text-white rounded" type="submit">
+                <button className="p-2 bg-green-500 text-slate-800 rounded" type="submit">
                     Schedule Post
                 </button>
             </form>
 
             <Analytics />  {/* Include the new Analytics component */}
 
-            <div className="mt-8">
-                <h2 className="text-xl font-semibold">Tips to Increase Your Online Popularity</h2>
-                <ul className="list-disc pl-5">
-                    {tips.map((tip, index) => (
-                        <li key={index} className="mb-2">
-                            {tip}
-                        </li>
-                    ))}
-                </ul>
-            </div>
+            <div className="mt-8 bg-gradient-to-r from-slate-400 via-purple-500 to-pink-500 p-6 rounded-lg shadow-lg">
+            <h4 className="text-xl font-bold text-white mb-4">Tips to Increase Your Online Popularity</h4>
+            <ul className="list-disc pl-5 text-violet-950 font-black">
+                {tips.map((tip, index) => (
+                    <li key={index} className="mb-2 hover:text-yellow-300 transition-colors duration-200">
+                        {tip}
+                    </li>
+                ))}
+            </ul>
+        </div>
         </div>
     );
 };

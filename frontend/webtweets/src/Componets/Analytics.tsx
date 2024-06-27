@@ -48,17 +48,16 @@ const Analytics: React.FC = () => {
         { name: '55+', value: 100 },
     ];
 
-    
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#AF19FF'];
 
     return (
         <div className="mt-8">
             <h2 className="text-xl font-semibold">Analytics</h2>
 
-            <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-2">Likes Analysis</h3>
+            <div className="mt-8 right-0">
+                <center><h3 className="text-lg font-semibold mb-2">Likes Analysis</h3></center>
                 <ResponsiveContainer width="100%" height={400}>
-                    <BarChart data={likesData}>
+                    <BarChart data={likesData} margin={{ right: 60 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
                         <YAxis />
@@ -70,9 +69,9 @@ const Analytics: React.FC = () => {
             </div>
 
             <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-2">Tweets Analysis</h3>
+                <center><h3 className="text-lg font-semibold mb-2">Tweets Analysis</h3></center>
                 <ResponsiveContainer width="100%" height={400}>
-                    <LineChart data={tweetsData}>
+                    <LineChart data={tweetsData} margin={{ right: 60 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
                         <YAxis />
@@ -84,9 +83,9 @@ const Analytics: React.FC = () => {
             </div>
 
             <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-2">Followers Analysis</h3>
+                <center><h3 className="text-lg font-semibold mb-2">Followers Analysis</h3></center>
                 <ResponsiveContainer width="100%" height={400}>
-                    <BarChart data={followersData}>
+                    <BarChart data={followersData} margin={{ right: 60 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="name" />
                         <YAxis />
@@ -98,7 +97,7 @@ const Analytics: React.FC = () => {
             </div>
 
             <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-2">Demographic Analysis</h3>
+                <center><h3 className="text-lg font-semibold mb-2">Demographic Analysis</h3></center>
                 <ResponsiveContainer width="100%" height={400}>
                     <PieChart>
                         <Pie
@@ -111,16 +110,12 @@ const Analytics: React.FC = () => {
                             fill="#8884d8"
                             label
                         >
-                            {demographicData.map((entry, index) => {
-                                console.log(entry); // Log each entry to check values
-                                return (
-                                    <Cell
-                                        key={`cell-${index}`}
-                                        fill={COLORS[index % COLORS.length]}
-                                        // You can add more properties from entry if needed
-                                    />
-                                );
-                            })}
+                            {demographicData.map((entry, index) => (
+                                <Cell
+                                    key={`cell-${index}`}
+                                    fill={COLORS[index % COLORS.length]}
+                                />
+                            ))}
                         </Pie>
                         <Tooltip />
                     </PieChart>
