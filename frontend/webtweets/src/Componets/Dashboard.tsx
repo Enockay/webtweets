@@ -8,7 +8,7 @@ import BadgeList from './BagdeList'; // Ensure the correct import
 import HomePage from './HomePage'; // Import HomePage component
 import { ClipLoader } from 'react-spinners';
 import CreateProject from './CreateProject';
-import Profile from './Profile';
+
 
 interface Badge {
     id: string;
