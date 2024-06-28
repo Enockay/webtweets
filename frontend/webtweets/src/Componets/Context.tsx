@@ -52,20 +52,10 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   }, []);
 
-  useEffect(() => {
-    if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
-    } else {
-      localStorage.removeItem('user');
-    }
-  }, [user]);
-
   const updateUser = (updates: Partial<User>) => {
     setUser(prevUser => {
       if (!prevUser) return null;
-      const updatedUser = { ...prevUser, ...updates };
-      localStorage.setItem('user', JSON.stringify(updatedUser));
-      return updatedUser;
+      return { ...prevUser, ...updates };
     });
   };
 
