@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
+import {jwtDecode} from 'jwt-decode';
 
 interface SocialMedia {
   username: string | undefined;
@@ -35,12 +36,21 @@ interface UserContextType {
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(() => {
-    const storedUser = localStorage.getItem('token');
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
-
+  const [user, setUser] = useState<User | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'paypal' | 'mpesa' | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const decodedUser = jwtDecode<User>(token);
+        setUser(decodedUser);
+      } catch (error) {
+        console.error('Failed to decode token:', error);
+        localStorage.removeItem('token');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (user) {
