@@ -1,40 +1,70 @@
 import React, { useState } from 'react';
 import { FaUserCircle } from 'react-icons/fa';
-import { useUser } from './Context';
-import icon from '../assets/icon.jpg';
-import LoginModal from '../Componets/pages/LoginModal'; // Adjust the import path as necessary
 import { useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
+import icon from '../assets/icon.jpg';
+import LoginModal from '../Componets/pages/LoginModal'; // Adjust the import path as necessary
 
-const Header: React.FC = () => {
-  const { user, setUser } = useUser();
+interface SocialMedia {
+  username: string | undefined;
+  followers: number;
+  likes: number;
+  profileImageUrl: string | undefined;
+}
+
+interface User {
+  profileImageUrl: string | undefined;
+  badges: any[];
+  createdAt: string;
+  email: string;
+  hashtags: any[];
+  isLive: boolean;
+  password: string;
+  username: string;
+  displayName?: string;
+  twitter?: SocialMedia;
+  tiktok?: SocialMedia;
+  instagram?: SocialMedia;
+  __v: number;
+  _id: string;
+}
+
+interface HeaderProps {
+  user: User | null;
+  setUser: (user: User | null) => void;
+  loading: boolean;
+}
+
+const Header: React.FC<HeaderProps> = ({ user, setUser, loading }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const [Loading , setLoading] = useState(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleToggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
   const handleLogout = async () => {
-    setLoading(true);
-     const logoutUser = await fetch('https://webtweets-dawn-forest-2637.fly.dev/auth/logout', {
-            method: 'POST',
-            headers:{
-                "Content-Type":"application/json"
-            },
-            credentials: 'include',
-            body :JSON.stringify(user)
-        });
-     const response = await logoutUser.json();
-     console.log(response);
-     if(response.success){
-        navigate("/login");
+    try {
+      const logoutUser = await fetch('https://webtweets-dawn-forest-2637.fly.dev/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify(user),
+      });
+      const response = await logoutUser.json();
+      if (response.success) {
+        navigate('/login');
         setUser(null);
-     }  
-    };
+        localStorage.removeItem('token');
+      }
+    } catch (err) {
+      console.error('Logout error:', err);
+    }
+  };
 
   const openLoginModal = () => {
     setLoginModalOpen(true);
@@ -44,16 +74,40 @@ const Header: React.FC = () => {
     setLoginModalOpen(false);
   };
 
+  const getProfileImageUrl = () => {
+    if (user?.twitter?.profileImageUrl) {
+      return user.twitter.profileImageUrl;
+    } else if (user?.tiktok?.profileImageUrl) {
+      return user.tiktok.profileImageUrl;
+    } else if (user?.instagram?.profileImageUrl) {
+      return user.instagram.profileImageUrl;
+    } else {
+      return undefined;
+    }
+  };
+
+  const getUsername = () => {
+    if (user?.twitter?.username) {
+      return user.twitter.username;
+    } else if (user?.tiktok?.username) {
+      return user.tiktok.username;
+    } else if (user?.instagram?.username) {
+      return user.instagram.username;
+    } else {
+      return user?.username || 'User';
+    }
+  };
+
   return (
     <header className="flex items-center justify-between bg-gradient-to-r from-green-400 to-blue-500 p-4 text-white relative">
       <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url(${icon})`, backgroundSize: 'cover' }}></div>
       <div className="relative flex items-center space-x-4">
-      <center>{Loading && <ClipLoader size={30} color={"#ffffff"} loading={Loading} />}</center> 
+        {loading && <ClipLoader size={30} color={"#ffffff"} loading={loading} />}
         <div className="flex items-center">
-          {user?.profileImageUrl ? (
+          {user && getProfileImageUrl() ? (
             <img
-              src={user.twitter?.profileImageUrl}
-              alt={user.twitter?.username}
+              src={getProfileImageUrl()}
+              alt={getUsername()}
               className="w-10 h-10 rounded-full cursor-pointer"
               onClick={handleToggleDropdown}
             />
@@ -63,9 +117,11 @@ const Header: React.FC = () => {
               onClick={handleToggleDropdown}
             />
           )}
-          <span className="ml-2 cursor-pointer text-gray-700" onClick={handleToggleDropdown}>
-            {user?.username}!
-          </span>
+          {user && (
+            <span className="ml-2 cursor-pointer text-gray-700" onClick={handleToggleDropdown}>
+              {getUsername()}!
+            </span>
+          )}
         </div>
         {dropdownOpen && (
           <div className="absolute mt-16 w-48 bg-white text-black rounded-lg shadow-lg z-10">

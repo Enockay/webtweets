@@ -226,7 +226,7 @@ const Dashboard: React.FC = () => {
         <div className="flex flex-col lg:flex-row min-h-screen text-white">
           <Sidebar onSectionChange={setCurrentSection} />
           <div className="flex-1 lg:p-8 lg:ml-64 mb-10">
-              <Header/>
+          <Header user={user} setUser={setUser} loading={loading} />
             {renderSection()}
             {isModalOpen && selectedBadge && (
               <BadgePurchaseModal
