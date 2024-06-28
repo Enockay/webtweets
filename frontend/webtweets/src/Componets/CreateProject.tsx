@@ -188,7 +188,6 @@ const CreateProject: React.FC = () => {
                     </select>
                 </div>
 
-                
                 <div className="mb-4 bg-gray-500 p-4 rounded">
                     <label className="block mb-2">Upload Media (Max 2 min video or image)</label>
                     <input
@@ -199,19 +198,31 @@ const CreateProject: React.FC = () => {
                     />
                     {fileURL && (
                         <div className="mt-2">
+                            {file && file.type.startsWith('image/') && (
+                                <img src={fileURL} alt="Preview" className="max-w-72 h-auto" />
+                            )}
+                            {file && file.type.startsWith('video/') && (
+                                <video controls className="max-w-72 h-auto">
+                                    <source src={fileURL} type={file.type} />
+                                    Your browser does not support the video tag.
+                                </video>
+                            )}
                             <p className='text-cyan-300'>Uploaded File: <a href={fileURL} target="_blank" rel="noopener noreferrer">{file?.name}</a></p>
                         </div>
                     )}
-               
-                <label className="block mb-0">Caption..</label>
-                <input
-                    className="w-full p-1 border rounded mb-4 text-slate-700"
-                    value={content}
-                    onChange={(e) => setContent(e.target.value)}
-                    placeholder="Create a new post"
-                    required
-                />
-              </div>
+                </div>
+
+                <div className="mb-4">
+                    <label className="block mb-0">Caption</label>
+                    <input
+                        className="w-full p-1 border rounded mb-4 text-slate-700"
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                        placeholder="Create a new post"
+                        required
+                    />
+                </div>
+
                 <div className="mb-4">
                     <label className="block mb-2">Post Schedule Time</label>
                     <input
@@ -276,7 +287,7 @@ const CreateProject: React.FC = () => {
                 className="bg-green-300 p-4 rounded shadow-lg w-80 mx-auto mt-24"
                 overlayClassName="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
             >
-                <h2 className="text-xl  mb-4 text-red-800 text-center">Confirm Schedule</h2>
+                <h2 className="text-xl mb-4 text-red-800 text-center">Confirm Schedule</h2>
                 <div className="flex flex-col items-center">
                     <p><strong>Platform:</strong> {platform}</p>
                     <p><strong>Content:</strong> {content}</p>
