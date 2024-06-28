@@ -34,7 +34,7 @@ interface Props {
   timeLeft: number;
 }
 
-const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) => {
+const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
   const [suggestedTweet, setSuggestedTweet] = useState('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [selectedLiveUsers, setSelectedLiveUsers] = useState<string[]>([]);
