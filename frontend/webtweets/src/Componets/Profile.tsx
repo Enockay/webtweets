@@ -4,10 +4,16 @@ import 'chart.js/auto';
 import zoomPlugin from 'chartjs-plugin-zoom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTiktok, faTwitter, faInstagram } from '@fortawesome/free-brands-svg-icons';
-import { useUser } from './Context'; // Adjust the import path based on your project structure
+import { useUser } from './Context';
+import { useDashboard } from './DashContext';
 
 const Profile: React.FC = () => {
   const { user } = useUser();
+  const { setCurrentSection } = useDashboard();
+
+  const redirectToCreateProject = () => {
+    setCurrentSection('create project');
+  };
 
   const isDataComplete = user && user.tiktok && user.twitter && user.instagram && user.tiktok.likes !== undefined && user.twitter.likes !== undefined && user.instagram.likes !== undefined && user.tiktok.followers !== undefined && user.twitter.followers !== undefined && user.instagram.followers !== undefined;
 
@@ -17,7 +23,6 @@ const Profile: React.FC = () => {
     { platform: 'Instagram', ...user.instagram, color: '#E4405F', icon: faInstagram },
   ] : [];
 
-  // Generate labels for the past 5 years
   const getLast60Months = () => {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const now = new Date();
@@ -79,11 +84,11 @@ const Profile: React.FC = () => {
           pinch: {
             enabled: true,
           },
-          mode: 'x' as const, // Explicitly specifying the mode as 'x'
+          mode: 'x' as const,
         },
         pan: {
           enabled: true,
-          mode: 'x' as const, // Explicitly specifying the mode as 'x'
+          mode: 'x' as const,
         },
       },
     },
@@ -94,16 +99,15 @@ const Profile: React.FC = () => {
       {user ? (
         <>
           {!isDataComplete && (
-            <div className="alert mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-3">
-              <p>Some data is missing. Please <a href="/link-account" className="underline text-red-700">link your account</a> to provide complete information.</p>
+            <div className="alert mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded mb-3 animate-bounce">
+              <p>Some data is missing. Please <a href="#" className="underline text-red-700" onClick={redirectToCreateProject}>link your account</a> to provide complete information.</p>
             </div>
           )}
 
-          {/* Social Media Stats */}
           <div className="">
             {socialMediaData.map((platformData, index) => (
               <div key={index} className="flex bg-gray-100 rounded-lg p-1 text-center shadow-sm mb-3 justify-center align-middle" style={{ borderColor: platformData.color, borderWidth: 2 }}>
-                <div className="flex flex-col justify-center items-center mr-1">
+                <div className="flex flex-col justify-center items-center mr-4">
                   <FontAwesomeIcon icon={platformData.icon} size="2x" style={{ color: platformData.color }} />
                 </div>
                 <div>
@@ -114,7 +118,6 @@ const Profile: React.FC = () => {
             ))}
           </div>
 
-          {/* Line Graph */}
           <div className="mt-8">
             <h6 className="font-extralight mb-4 text-green-200">Likes and Followers Over Time</h6>
             <div className="bg-gray-100 rounded-lg p-4 shadow-sm">

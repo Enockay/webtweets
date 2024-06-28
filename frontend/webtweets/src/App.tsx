@@ -5,10 +5,12 @@ import Login from './Componets/pages/Login';
 import SignUp from './Componets/pages/SignUp';
 import Dashboard from './Componets/Dashboard';
 import { UserProvider } from './Componets/Context';
+import { DashboardProvider } from './Componets/DashContext';
 
 const App: React.FC = () => {
   return (
     <UserProvider>
+      <DashboardProvider>
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
@@ -17,6 +19,7 @@ const App: React.FC = () => {
           <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </Router>
+      </DashboardProvider> 
     </UserProvider>
   );
 };

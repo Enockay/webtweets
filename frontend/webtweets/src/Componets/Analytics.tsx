@@ -58,7 +58,7 @@ const Analytics: React.FC = () => {
         <center><h3 className="text-lg font-semibold mb-2">Likes Analysis</h3></center>
         <div className="w-full h-96">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={likesData} margin={{ right: 60 }}>
+            <BarChart data={likesData} margin={{ right: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
@@ -74,7 +74,7 @@ const Analytics: React.FC = () => {
         <center><h3 className="text-lg font-semibold mb-2">Tweets Analysis</h3></center>
         <div className="w-full h-96">
           <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={tweetsData} margin={{ right: 60 }}>
+            <LineChart data={tweetsData} margin={{ right: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />
@@ -90,7 +90,7 @@ const Analytics: React.FC = () => {
         <center><h3 className="text-lg font-semibold mb-2">Followers Analysis</h3></center>
         <div className="w-full h-96">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={followersData} margin={{ right: 60 }}>
+            <BarChart data={followersData} margin={{ right: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />
               <YAxis />

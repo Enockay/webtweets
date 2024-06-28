@@ -9,7 +9,7 @@ import HomePage from './HomePage'; // Import HomePage component
 import { ClipLoader } from 'react-spinners';
 import CreateProject from './CreateProject';
 import { jwtDecode } from 'jwt-decode';
-
+import { useDashboard } from './DashContext';
 
 interface LiveUser {
     username: string;
@@ -17,11 +17,12 @@ interface LiveUser {
 }
 
 const Dashboard: React.FC = () => {
+    const { currentSection } = useDashboard();
     const [loading, setLoading] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
     const [liveUsers, setLiveUsers] = useState<LiveUser[]>([]);
     const [pastTweets, setPastTweets] = useState<{ id: string; content: string }[]>([]);
-    const [currentSection, setCurrentSection] = useState('home');
+    
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedBadge, setSelectedBadge] = useState<Badge | null>(null);
     const navigate = useNavigate();
@@ -171,28 +172,29 @@ const Dashboard: React.FC = () => {
         }
       ];
       
-    const renderSection = () => {
+      const renderSection = () => {
         switch (currentSection) {
-            case 'home':
-                return <HomePage user={user} pastTweets={pastTweets} liveUsers={liveUsers} timeLeft={timeLeft} />;
-            case 'create project' :
-                return <CreateProject/>
-            case 'projects':
-                return <div>Projects Section</div>;
-            case 'settings':
-                return <div>Settings Section</div>;
-            case 'badges':
-                return <BadgeList badgeOptions={badgeOptions} openModal={openModal} />;
-            default:
-                return null;
+          case 'home':
+            return <HomePage user={user} pastTweets={pastTweets} liveUsers={liveUsers} timeLeft={timeLeft} />;
+          case 'create project':
+            return <CreateProject />;
+          case 'projects':
+            return <div>Projects Section</div>;
+          case 'settings':
+            return <div>Settings Section</div>;
+          case 'badges':
+            return <BadgeList badgeOptions={badgeOptions} openModal={openModal} />;
+          default:
+            return null;
         }
-    };
+      };
+    
 
     return (
         <div className=' bg-gray-900'>
          <center>{loading && <ClipLoader size={30} color={"#ffffff"} loading={loading} />}</center>  
         <div className="flex flex-col lg:flex-row min-h-screen text-white">
-          <Sidebar onSectionChange={setCurrentSection} />
+          <Sidebar />
           <div className="flex-1 lg:p-8 lg:ml-64 mb-10">
           <Header />
             {renderSection()}

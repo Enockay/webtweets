@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { schedulePost, linkAccount, requestPermissions } from '../Componets/projectService';
+import { schedulePost, linkAccount, requestPermissions } from './projectService';
 import { useUser } from '../Componets/Context';
 import { ClipLoader } from 'react-spinners';
-import Analytics from './Analytics';  // Import the new Analytics component
+import Analytics from './Analytics';
+import Modal from 'react-modal';
+
+Modal.setAppElement('#root');
 
 const CreateProject: React.FC = () => {
     const [content, setContent] = useState('');
@@ -13,8 +16,15 @@ const CreateProject: React.FC = () => {
         instagram: false,
         twitter: false,
     });
+    const [platform, setPlatform] = useState('');
+    const [file, setFile] = useState<File | null>(null);
+    const [fileURL, setFileURL] = useState<string | null>(null);
+    const [tags, setTags] = useState('');
     const [loading, setLoading] = useState(false);
-    const { user} = useUser();
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [confirmationModalIsOpen, setConfirmationModalIsOpen] = useState(false);
+    const [modalContent, setModalContent] = useState('');
+    const { user } = useUser();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -23,46 +33,88 @@ const CreateProject: React.FC = () => {
         }
     }, [user, navigate]);
 
+    const openModal = (content: string) => {
+        setModalContent(content);
+        setModalIsOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalIsOpen(false);
+    };
+
+    const openConfirmationModal = () => {
+        setConfirmationModalIsOpen(true);
+    };
+
+    const closeConfirmationModal = () => {
+        setConfirmationModalIsOpen(false);
+    };
+
     const handleLinkAccount = async (platform: string) => {
         setLoading(true);
+        openModal(`Linking ${platform} account...`);
         try {
             await linkAccount(platform);
             setLinkedAccounts((prev) => ({ ...prev, [platform]: true }));
-            alert(`${platform} account linked successfully!`);
+            setModalContent(`${platform} account linked successfully!`);
         } catch (error) {
             console.error(error);
-            alert(`Failed to link ${platform} account.`);
+            setModalContent(`Failed to link ${platform} account.`);
         } finally {
             setLoading(false);
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        openConfirmationModal();
+    };
+
+    const handleConfirmSchedule = async () => {
         setLoading(true);
+        closeConfirmationModal();
+        openModal(`Scheduling post...`);
         try {
-            await schedulePost({ content, scheduledTime });
+            await schedulePost({ content, scheduledTime, platform, file, tags });
             setContent('');
             setScheduledTime('');
-            alert('Post scheduled successfully!');
+            setPlatform('');
+            setFile(null);
+            setFileURL(null);
+            setTags('');
+            setModalContent('Post scheduled successfully!');
         } catch (error) {
             console.error(error);
-            alert('Failed to schedule post.');
+            setModalContent('Failed to schedule post.');
         } finally {
             setLoading(false);
         }
     };
 
-    const handleRequestPermissions = async () => {
-        setLoading(true);
-        try {
-            await requestPermissions();
-            alert('Permissions granted successfully!');
-        } catch (error) {
-            console.error(error);
-            alert('Failed to request permissions.');
-        } finally {
-            setLoading(false);
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const selectedFile = e.target.files[0];
+
+            // Check if the uploaded file is a video
+            if (selectedFile.type.startsWith('video/')) {
+                const video = document.createElement('video');
+                video.src = URL.createObjectURL(selectedFile);
+                video.onloadedmetadata = () => {
+                    // Check the video duration
+                    if (video.duration > 120) {
+                        alert('Video duration exceeds 2 minutes. Please upload a shorter video.');
+                        setFile(null);
+                        setFileURL(null);
+                    } else {
+                        setFile(selectedFile);
+                        setFileURL(video.src);
+                    }
+                };
+            } else {
+                // Handle image uploads
+                setFile(selectedFile);
+                setFileURL(URL.createObjectURL(selectedFile));
+            }
         }
     };
 
@@ -80,7 +132,7 @@ const CreateProject: React.FC = () => {
 
     return (
         <div className="container mx-auto p-4">
-            <h1 className="text-2xl  mb-3 text-lime-300 font-light">Create Project</h1>
+            <h1 className="text-2xl mb-3 text-lime-300 font-light">Create Project</h1>
             <div className="mb-4">
                 <h2 className="text-xl font-semibold mb-4">Link Accounts</h2>
                 <div className="flex space-x-4">
@@ -109,34 +161,76 @@ const CreateProject: React.FC = () => {
                         </button>
                     )}
                 </div>
-              <center> {loading && <ClipLoader size={30} color={"#0000FF"} loading={loading} />}</center> 
             </div>
 
             <div className="mb-4 hidden md:hidden">
                 <button
                     className="p-2 bg-green-500 text-slate-700 rounded"
-                    onClick={handleRequestPermissions}
+                    onClick={requestPermissions}
                 >
                     Request Permissions
                 </button>
             </div>
 
             <form onSubmit={handleSubmit}>
-                <textarea
-                    className="w-full p-2 border rounded mb-4"
+                <div className="mb-4">
+                    <label className="block mb-2">Select Platform</label>
+                    <select
+                        className="p-2 border rounded w-full text-slate-900"
+                        value={platform}
+                        onChange={(e) => setPlatform(e.target.value)}
+                        required
+                    >
+                        <option value="">Select Platform</option>
+                        <option value="tiktok">TikTok</option>
+                        <option value="instagram">Instagram</option>
+                        <option value="twitter">Twitter</option>
+                    </select>
+                </div>
+
+                
+                <div className="mb-4">
+                    <label className="block mb-2">Upload Media (Max 2 min video or image)</label>
+                    <input
+                        type="file"
+                        className="p-2 border rounded w-full text-slate-900"
+                        onChange={handleFileChange}
+                        accept="image/*,video/*"
+                    />
+                    {fileURL && (
+                        <div className="mt-2">
+                            <p className='text-cyan-300'>Uploaded File: <a href={fileURL} target="_blank" rel="noopener noreferrer">{file?.name}</a></p>
+                        </div>
+                    )}
+                </div>
+                <label className="block mb-2">Caption..</label>
+                <input
+                    className="w-full p-1 border rounded mb-4 text-slate-700"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
                     placeholder="Create a new post"
                     required
-                ></textarea>
+                />
 
                 <div className="mb-4">
-                    <label className="block mb-2">Post Shedule Time</label>
+                    <label className="block mb-2">Post Schedule Time</label>
                     <input
                         type="datetime-local"
                         className="p-2 border rounded w-full text-slate-900"
                         value={scheduledTime}
                         onChange={(e) => setScheduledTime(e.target.value)}
+                        required
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <label className="block mb-2">Hashtags/Tags</label>
+                    <input
+                        type="text"
+                        className="p-2 border rounded w-full text-slate-900"
+                        value={tags}
+                        onChange={(e) => setTags(e.target.value)}
+                        placeholder="Enter hashtags/tags"
                     />
                 </div>
 
@@ -145,18 +239,60 @@ const CreateProject: React.FC = () => {
                 </button>
             </form>
 
-            <Analytics />  {/* Include the new Analytics component */}
+            <Analytics />
 
             <div className="mt-8 bg-gradient-to-r from-slate-400 via-purple-500 to-pink-500 p-6 rounded-lg shadow-lg">
-            <h4 className="text-xl font-bold text-white mb-4">Tips to Increase Your Online Popularity</h4>
-            <ul className="list-disc pl-5 text-violet-950 font-black">
-                {tips.map((tip, index) => (
-                    <li key={index} className="mb-2 hover:text-yellow-300 transition-colors duration-200">
-                        {tip}
-                    </li>
-                ))}
-            </ul>
-        </div>
+                <h4 className="text-xl font-bold text-white mb-4">Tips to Increase Your Online Popularity</h4>
+                <ul className="list-disc pl-5 text-violet-950 font-black">
+                    {tips.map((tip, index) => (
+                        <li key={index} className="mb-2 hover:text-yellow-300 transition-colors duration-200">
+                            {tip}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                contentLabel="Processing Modal"
+                className="bg-green-300 p-4 rounded shadow-lg w-80 mx-auto mt-24"
+                overlayClassName="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
+            >
+                <h2 className="text-xl font-semibold mb-4">Processing</h2>
+                <div className="flex flex-col items-center">
+                    <ClipLoader size={30} color={"#0000FF"} loading={loading} />
+                    <p className="mt-4">{modalContent}</p>
+                </div>
+                <button className="mt-4 p-2 bg-blue-500 text-white rounded" onClick={closeModal}>
+                    Close
+                </button>
+            </Modal>
+
+            <Modal
+                isOpen={confirmationModalIsOpen}
+                onRequestClose={closeConfirmationModal}
+                contentLabel="Confirmation Modal"
+                className="bg-green-300 p-4 rounded shadow-lg w-80 mx-auto mt-24"
+                overlayClassName="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
+            >
+                <h2 className="text-xl  mb-4 text-red-800 text-center">Confirm Schedule</h2>
+                <div className="flex flex-col items-center">
+                    <p><strong>Platform:</strong> {platform}</p>
+                    <p><strong>Content:</strong> {content}</p>
+                    {file && <p><strong>File:</strong> {file.name}</p>}
+                    <p><strong>Tags:</strong> {tags}</p>
+                    <p><strong>Scheduled System Time:</strong> {scheduledTime}</p>
+                </div>
+                <div className="mt-4 flex space-x-4">
+                    <button className="p-2 bg-blue-500 text-white rounded" onClick={handleConfirmSchedule}>
+                        Confirm
+                    </button>
+                    <button className="p-2 bg-red-500 text-white rounded" onClick={closeConfirmationModal}>
+                        Cancel
+                    </button>
+                </div>
+            </Modal>
         </div>
     );
 };
