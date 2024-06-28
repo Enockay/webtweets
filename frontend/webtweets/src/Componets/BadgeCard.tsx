@@ -67,7 +67,7 @@ const BadgeCard: React.FC<BadgeCardProps> = ({ badgeIds }) => {
   }
 
   return (
-    <div className="container mx-auto">
+    <div className="container mx-auto bg-stone-500 p-4 rounded">
       <div className="flex overflow-x-auto scrollbar-hide gap-2 py-1">
         {message && <center className="text-green-300">{message}</center>}
         {badges.map((badge, index) => (

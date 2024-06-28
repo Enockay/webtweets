@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Countdown from './Countdown';
 import BadgeCard from './BadgeCard';
 import { AiOutlineFileImage } from 'react-icons/ai';
 import { FaRetweet } from 'react-icons/fa';
-import {User } from './Context';
-import { BsArrowRightShort } from 'react-icons/bs';
+import { User } from './Context';
 import Profile from './Profile';
-
+import { getProjectSchedules } from './projectService'; // Adjust the import path as needed
 
 interface Tweet {
   id: string;
@@ -17,6 +16,15 @@ interface Tweet {
 interface LiveUser {
   username: string;
   profileImageUrl: string;
+}
+
+interface ProjectSchedule {
+  id: string;
+  status: string;
+  platform: string;
+  content: string;
+  mediaItem: string | null;
+  scheduledTime: string;
 }
 
 interface Props {
@@ -33,6 +41,47 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
   const [userSuggestedHashtags, setUserSuggestedHashtags] = useState<string[]>([]);
   const [chatGptResponse, setChatGptResponse] = useState<string>('');
   const [isProfileVisible, setIsProfileVisible] = useState(false);
+  const [projectSchedules, setProjectSchedules] = useState<ProjectSchedule[]>([]);
+
+  useEffect(() => {
+    const fetchProjectSchedules = async () => {
+      try {
+        const schedules = await getProjectSchedules();
+        setProjectSchedules(schedules);
+      } catch (error) {
+        console.error('Error fetching project schedules:', error);
+        // Use dummy data when fetching fails or returns empty
+        setProjectSchedules([
+          {
+            id: '1',
+            status: 'Scheduled',
+            platform: 'Twitter',
+            content: 'Check out our new feature! #newfeature #launch',
+            mediaItem: null,
+            scheduledTime: new Date().toISOString(),
+          },
+          {
+            id: '2',
+            status: 'Posted',
+            platform: 'Facebook',
+            content: 'We are excited to announce our latest update! #update #announcement',
+            mediaItem: null,
+            scheduledTime: new Date().toISOString(),
+          },
+          {
+            id: '3',
+            status: 'Scheduled',
+            platform: 'Instagram',
+            content: 'Sneak peek of our upcoming release! #sneakpeek #comingsoon',
+            mediaItem: 'https://via.placeholder.com/150',
+            scheduledTime: new Date().toISOString(),
+          },
+        ]);
+      }
+    };
+
+    fetchProjectSchedules();
+  }, []);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -51,12 +100,10 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
   const handleSuggestTweet = async () => {
     console.log('Suggested Tweet:', suggestedTweet, 'Image:', uploadedImage, 'Tagged Users:', selectedLiveUsers);
 
-    // Extract hashtags from the tweet and update user-suggested hashtags
     const hashtagsInTweet = suggestedTweet.match(/#\w+/g) || [];
     const newHashtags = hashtagsInTweet.map((tag) => tag.slice(1));
     setUserSuggestedHashtags((prevHashtags) => Array.from(new Set([...prevHashtags, ...newHashtags])));
 
-    // Make API call to ChatGPT for tweet suggestions
     try {
       const response = await axios.post('/api/chatgpt/suggest-tweet', { suggestedTweet });
       setChatGptResponse(response.data.suggestion);
@@ -91,18 +138,14 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
               ))}
             </div>
             {/* Toggle Profile Button */}
-
           </section>
           <div>
-            {/* Toggle Profile Button (visible only on small screens) */}
             <button
               onClick={() => setIsProfileVisible(!isProfileVisible)}
               className="mt-4 bg-blue-600 text-white rounded p-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 lg:hidden"
             >
               {isProfileVisible ? 'Hide Profile' : 'View Profile'}
             </button>
-
-            {/* Profile Component (always visible on large screens, toggleable on small screens) */}
             <div className={`mt-4 ${isProfileVisible ? 'block' : 'hidden'} lg:block`}>
               <Profile />
             </div>
@@ -157,75 +200,76 @@ const HomePage: React.FC<Props> = ({ user, pastTweets, liveUsers, timeLeft }) =>
               />
               <button
                 onClick={handleSuggestTweet}
-                className="bg-blue-600 text-white rounded-full p-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ml-2"
+                className="ml-2 bg-blue-600 text-white rounded p-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <BsArrowRightShort size={24} />
+                Tweet
               </button>
             </div>
-            {uploadedImage && <img src={uploadedImage} alt="Upload Preview" className="mt-4 max-h-40 rounded-lg shadow-md" />}
+            {uploadedImage && (
+              <div className="mt-4">
+                <img src={uploadedImage} alt="Uploaded" className="max-w-full h-auto rounded-lg" />
+              </div>
+            )}
             {chatGptResponse && (
-              <div className="mt-4 p-4 bg-gray-800 rounded-lg">
-                <h3 className="text-xl font-bold mb-2">ChatGPT Suggestion</h3>
-                <p>{chatGptResponse}</p>
+              <div className="mt-4 p-2 border border-green-500 rounded bg-green-100 text-green-800">
+                <strong>Suggestion:</strong> {chatGptResponse}
               </div>
             )}
           </section>
-          <section className="mb-4 lg:mb-8">
-            <h4 className="text-xl font-bold mb-4">Suggested Hashtags</h4>
-            <div className="flex flex-wrap gap-2">
-              {userSuggestedHashtags.map((tag, index) => (
-                <span key={index} className="inline-block bg-green-600 text-white rounded-full px-3 py-1 text-sm font-semibold mr-2 mb-2">
-                  #{tag}
-                </span>
-              ))}
-            </div>
-            <p className="text-sm text-gray-400 mt-2">These hashtags will be amplified in the next hour.</p>
-          </section>
-          <section className="mb-4 lg:mb-8">
-            <h4 className="text-xl font-bold mb-4">Past Amplified Tweets</h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {pastTweets.map((tweet) => (
-                <div key={tweet.id} className="p-4 bg-gray-800 rounded shadow">
-                  {tweet.content}
-                </div>
-              ))}
-            </div>
-          </section>
-          <section className="mb-4 lg:mb-8 p-6 bg-gradient-to-r from-green-400 to-blue-500 rounded-lg shadow-lg text-white max-h-96 overflow-y-auto scrollbar-hide md:h-screen">
-            <h4 className="text-xl font-bold mb-4">How WebTweets Works</h4>
-            <div className="bg-white text-black p-4 rounded-lg shadow-md">
-              <h3 className="text-xl font-semibold mb-2">Key Features</h3>
-              <ul className="list-disc list-inside">
-                <li className="mb-2">
-                  <strong>Suggest Tweets:</strong> WebTweets allows users to suggest tweets, tag other live users, and use hashtags to increase the visibility of their tweets.
-                </li>
-                <li className="mb-2">
-                  <strong>Upload Images:</strong> Users can upload images to be included in their suggested tweets.
-                </li>
-                <li className="mb-2">
-                  <strong>ChatGPT Suggestions:</strong> WebTweets can provide tweet suggestions based on user input, using AI-powered ChatGPT.
-                </li>
-              </ul>
-            </div>
-            <div className="bg-white text-black p-4 rounded-lg shadow-md mt-4">
-              <h3 className="text-xl font-semibold mb-2">About WebTweets</h3>
-              <ul className="list-disc list-inside">
-                <li className="mb-2">
-                  WebTweets is designed to help users get their tweets noticed, particularly those from underrepresented communities and voices.
-                </li>
-                <li className="mb-2">
-                  By amplifying suggested hashtags and user IDs, WebTweets can help raise awareness about important issues and causes.
-                </li>
-                <li className="mb-2">
-                  Our platform provides a space for users to connect and collaborate, making it easier to amplify important messages.
-                </li>
-              </ul>
-            </div>
-            <div className="bg-white text-black p-4 rounded-lg shadow-md mt-4">
-              <h3 className="text-xl font-semibold mb-2">Conclusion</h3>
-              <p>
-                WebTweets is committed to providing a platform that amplifies underrepresented voices and helps users get their messages heard. By using WebTweets, you can suggest tweets, tag live users, and use hashtags to increase the visibility of your tweets. Join us today and be a part of the WebTweets community!
-              </p>
+          {/* Project Schedules Section */}
+          <section className="mt-4 lg:mt-8 min-h-80 bg-green-800 p-4 rounded">
+            <h4 className="text-xl font-bold mb-4 text-yellow-400">Project Schedules</h4>
+            <div className="overflow-x-auto">
+              <table className="min-w-full table-auto border-collapse">
+                <thead>
+                  <tr className="bg-gray-700 text-white">
+                    <th className="py-2 px-4 border-b border-gray-700">Scheduled Time</th>
+                    <th className="py-2 px-4 border-b border-gray-700">Media</th>
+                    <th className="py-2 px-4 border-b border-gray-700">Platform</th>
+                    <th className="py-2 px-4 border-b border-gray-700">Hashtags</th>
+                    <th className="py-2 px-4 border-b border-gray-700">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {projectSchedules.length > 0 ? (
+                    projectSchedules.map((schedule) => (
+                      <tr key={schedule.id} className="text-center">
+                        <td className="py-2 px-4 border-b border-gray-700">{new Date(schedule.scheduledTime).toLocaleString()}</td>
+                        <td className="py-2 px-4 border-b border-gray-700">
+                          {schedule.mediaItem ? <img src={schedule.mediaItem} alt="Media" className="w-12 h-12 object-cover rounded-lg mx-auto" /> : 'No Media'}
+                        </td>
+                        <td className="py-2 px-4 border-b border-gray-700">{schedule.platform}</td>
+                        <td className="py-2 px-4 border-b border-gray-700">{schedule.content.match(/#\w+/g)?.join(', ') || 'No Hashtags'}</td>
+                        <td className="py-2 px-4 border-b border-gray-700">{schedule.status}</td>
+                      </tr>
+                    ))
+                  ) : (
+                    <>
+                      <tr className="text-center">
+                        <td className="py-2 px-4 border-b border-gray-700">{new Date().toLocaleString()}</td>
+                        <td className="py-2 px-4 border-b border-gray-700">No Media</td>
+                        <td className="py-2 px-4 border-b border-gray-700">Twitter</td>
+                        <td className="py-2 px-4 border-b border-gray-700">#example, #project</td>
+                        <td className="py-2 px-4 border-b border-gray-700">Scheduled</td>
+                      </tr>
+                      <tr className="text-center">
+                        <td className="py-2 px-4 border-b border-gray-700">{new Date().toLocaleString()}</td>
+                        <td className="py-2 px-4 border-b border-gray-700">No Media</td>
+                        <td className="py-2 px-4 border-b border-gray-700">Facebook</td>
+                        <td className="py-2 px-4 border-b border-gray-700">#example, #project</td>
+                        <td className="py-2 px-4 border-b border-gray-700">Posted</td>
+                      </tr>
+                      <tr className="text-center">
+                        <td className="py-2 px-4 border-b border-gray-700">{new Date().toLocaleString()}</td>
+                        <td className="py-2 px-4 border-b border-gray-700"><img src="https://via.placeholder.com/150" alt="Media" className="w-12 h-12 object-cover rounded-lg mx-auto" /></td>
+                        <td className="py-2 px-4 border-b border-gray-700">Instagram</td>
+                        <td className="py-2 px-4 border-b border-gray-700">#example, #project</td>
+                        <td className="py-2 px-4 border-b border-gray-700">Scheduled</td>
+                      </tr>
+                    </>
+                  )}
+                </tbody>
+              </table>
             </div>
           </section>
         </div>

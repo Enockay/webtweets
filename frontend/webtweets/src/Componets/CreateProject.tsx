@@ -199,13 +199,13 @@ const CreateProject: React.FC = () => {
                     {fileURL && (
                         <div className="mt-2">
                             {file && file.type.startsWith('image/') && (
-                                <img src={fileURL} alt="Preview" className="max-w-72 h-auto" />
+                              <center><img src={fileURL} alt="Preview" className="max-w-80 h-auto" /></center>  
                             )}
                             {file && file.type.startsWith('video/') && (
-                                <video controls className="max-w-72 h-auto">
-                                    <source src={fileURL} type={file.type} />
-                                    Your browser does not support the video tag.
-                                </video>
+                              <center> <video controls className="max-w-72 h-auto">
+                              <source src={fileURL} type={file.type} />
+                              Your browser does not support the video tag.
+                          </video></center> 
                             )}
                             <p className='text-cyan-300'>Uploaded File: <a href={fileURL} target="_blank" rel="noopener noreferrer">{file?.name}</a></p>
                         </div>
