@@ -22,7 +22,6 @@ interface User {
   instagram?: SocialMedia;
   __v: number;
   _id: string;
-  
 }
 
 interface UserContextType {

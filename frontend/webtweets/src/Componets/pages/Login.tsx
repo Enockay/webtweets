@@ -38,7 +38,7 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen  bg-slate-500 p-4 sm:p-6 lg:p-8">
+    <div className="flex items-center justify-center min-h-screen  bg-gray-600 p-4 sm:p-6 lg:p-8">
       <div className=" fixed  max-w-md p-8 space-y-8 bg-gray-900 rounded-lg shadow-lg">
         <h4 className="text-xl font-extrabold text-center text-lime-400">Webtweets Login</h4>
         <p className="text-center text-green-400">Please enter your login and your password</p>

@@ -8,7 +8,7 @@ import BadgeList from './BagdeList'; // Ensure the correct import
 import HomePage from './HomePage'; // Import HomePage component
 import { ClipLoader } from 'react-spinners';
 import CreateProject from './CreateProject';
-
+import { jwtDecode ,JwtPayload} from 'jwt-decode';
 
 interface Badge {
     id: string;
@@ -19,7 +19,30 @@ interface Badge {
     priceUsd: string;
     benefits: string[];
   }
-  
+  interface SocialMedia {
+    username: string | undefined;
+    followers: number;
+    likes: number;
+    profileImageUrl: string | undefined;
+  }
+   
+  interface User {
+    profileImageUrl: string | undefined;
+    badges: any[];
+    createdAt: string;
+    email: string;
+    hashtags: any[];
+    isLive: boolean;
+    password: string;
+    username: string;
+    displayName?: string;
+    twitter?: SocialMedia;
+    tiktok?: SocialMedia;
+    instagram?: SocialMedia;
+    __v: number;
+    _id: string;
+  }
+
 interface LiveUser {
     username: string;
     profileImageUrl: string;
@@ -38,28 +61,17 @@ const Dashboard: React.FC = () => {
     const { user, setUser } = useUser();
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const username = params.get('username');
-        const displayName = params.get('displayName');
-        const profileImageUrl = params.get('profileImageUrl');
-   
-        if (username) {
-            setUser({
-                username,
-                displayName: displayName || undefined,
-                profileImageUrl: profileImageUrl || undefined, // Convert null to undefined
-                badges: [], // Assuming badges can be fetched later
-                createdAt: '', // Set appropriate default values for other properties
-                email: '',
-                hashtags: [],
-                isLive: false,
-                password: '',
-                __v: 0,
-                _id: '',
-            });
-            navigate('/Dashboard', { replace: true }); // Remove the query parameters from the URL
-        }
+      const params = new URLSearchParams(location.search);
+      const token = params.get('token');
+    
+      if (token) {
+          const decodedUser = jwtDecode<JwtPayload & User>(token);
+          setUser(decodedUser as User);
+          localStorage.setItem('token', token);
+          navigate('/Dashboard', { replace: true }); // Remove the query parameters from the URL
+      }
     }, [location, setUser, navigate]);
+    
 
     useEffect(() => {
         const fetchData = async () => {
