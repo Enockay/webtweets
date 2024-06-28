@@ -1,51 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { FaUserCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import icon from '../assets/icon.jpg';
-import LoginModal from '../Componets/pages/LoginModal'; // Adjust the import path as necessary
+import LoginModal from '../Componets/pages/LoginModal';
+import { useUser } from './Context'; // Adjust the import path as necessary
 
-interface SocialMedia {
-  username: string | undefined;
-  followers: number;
-  likes: number;
-  profileImageUrl: string | undefined;
-}
-
-interface User {
-  profileImageUrl: string | undefined;
-  badges: any[];
-  createdAt: string;
-  email: string;
-  hashtags: any[];
-  isLive: boolean;
-  password: string;
-  username: string;
-  displayName?: string;
-  twitter?: SocialMedia;
-  tiktok?: SocialMedia;
-  instagram?: SocialMedia;
-  __v: number;
-  _id: string;
-}
-
-interface HeaderProps {
-  user: User | null;
-  setUser: (user: User | null) => void;
-  loading: boolean;
-}
-
-const Header: React.FC<HeaderProps> = ({ user, setUser, loading }) => {
+const Header: React.FC = () => {
+  const {user, setUser, loginModalOpen, openLoginModal, closeLoginModal } = useUser();
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
+  
   const handleToggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
   const handleLogout = async () => {
+   setLoading(true)
     try {
       const logoutUser = await fetch('https://webtweets-dawn-forest-2637.fly.dev/auth/logout', {
         method: 'POST',
@@ -53,7 +27,6 @@ const Header: React.FC<HeaderProps> = ({ user, setUser, loading }) => {
           'Content-Type': 'application/json',
         },
         credentials: 'include',
-        body: JSON.stringify(user),
       });
       const response = await logoutUser.json();
       if (response.success) {
@@ -62,16 +35,9 @@ const Header: React.FC<HeaderProps> = ({ user, setUser, loading }) => {
         localStorage.removeItem('token');
       }
     } catch (err) {
+      
       console.error('Logout error:', err);
     }
-  };
-
-  const openLoginModal = () => {
-    setLoginModalOpen(true);
-  };
-
-  const closeLoginModal = () => {
-    setLoginModalOpen(false);
   };
 
   const getProfileImageUrl = () => {
@@ -98,11 +64,14 @@ const Header: React.FC<HeaderProps> = ({ user, setUser, loading }) => {
     }
   };
 
+  if (loading) {
+    return <ClipLoader size={30} color={"#ffffff"} loading={loading} />;
+  }
+
   return (
     <header className="flex items-center justify-between bg-gradient-to-r from-green-400 to-blue-500 p-4 text-white relative">
       <div className="absolute inset-0 opacity-20" style={{ backgroundImage: `url(${icon})`, backgroundSize: 'cover' }}></div>
       <div className="relative flex items-center space-x-4">
-        {loading && <ClipLoader size={30} color={"#ffffff"} loading={loading} />}
         <div className="flex items-center">
           {user && getProfileImageUrl() ? (
             <img

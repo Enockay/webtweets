@@ -4,35 +4,14 @@ import { FaTwitter } from 'react-icons/fa';
 import { ClipLoader } from 'react-spinners';
 import { useUser } from '../Context';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode,JwtPayload } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+import { DecodedToken } from '../Context';
 
 interface LoginModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
-interface SocialMedia {
-  username: string | undefined;
-  followers: number;
-  likes: number;
-  profileImageUrl: string | undefined;
-}
 
-interface User {
-  profileImageUrl: string | undefined;
-  badges: any[];
-  createdAt: string;
-  email: string;
-  hashtags: any[];
-  isLive: boolean;
-  password: string;
-  username: string;
-  displayName?: string;
-  twitter?: SocialMedia;
-  tiktok?: SocialMedia;
-  instagram?: SocialMedia;
-  __v: number;
-  _id: string;
-}
 const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -54,8 +33,8 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
       setLoading(false);
       if (response.ok) {
         const token = data.token;
-        const decodedUser = jwtDecode<JwtPayload & User>(token);
-        setUser(decodedUser as User);
+        const decodedToken = jwtDecode<DecodedToken>(token);
+        setUser(decodedToken.user)
         localStorage.setItem('token', token);
         navigate('/Dashboard', { replace: true }); 
       } else {

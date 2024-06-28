@@ -3,45 +3,13 @@ import Sidebar from './Sidebar';
 import Header from './Header';
 import BadgePurchaseModal from './BadgePurchaseModal';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useUser } from '../Componets/Context';
+import { useUser,DecodedToken,Badge} from '../Componets/Context';
 import BadgeList from './BagdeList'; // Ensure the correct import
 import HomePage from './HomePage'; // Import HomePage component
 import { ClipLoader } from 'react-spinners';
 import CreateProject from './CreateProject';
-import { jwtDecode ,JwtPayload} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
-interface Badge {
-    id: string;
-    name: string;
-    duration: string;
-    description: string;
-    priceKsh: string;
-    priceUsd: string;
-    benefits: string[];
-  }
-  interface SocialMedia {
-    username: string | undefined;
-    followers: number;
-    likes: number;
-    profileImageUrl: string | undefined;
-  }
-   
-  interface User {
-    profileImageUrl: string | undefined;
-    badges: any[];
-    createdAt: string;
-    email: string;
-    hashtags: any[];
-    isLive: boolean;
-    password: string;
-    username: string;
-    displayName?: string;
-    twitter?: SocialMedia;
-    tiktok?: SocialMedia;
-    instagram?: SocialMedia;
-    __v: number;
-    _id: string;
-  }
 
 interface LiveUser {
     username: string;
@@ -65,8 +33,8 @@ const Dashboard: React.FC = () => {
       const token = params.get('token');
     
       if (token) {
-          const decodedUser = jwtDecode<JwtPayload & User>(token);
-          setUser(decodedUser as User);
+         const decodedToken = jwtDecode<DecodedToken>(token);
+         setUser(decodedToken.user)
           localStorage.setItem('token', token);
           navigate('/Dashboard', { replace: true }); // Remove the query parameters from the URL
       }
@@ -226,7 +194,7 @@ const Dashboard: React.FC = () => {
         <div className="flex flex-col lg:flex-row min-h-screen text-white">
           <Sidebar onSectionChange={setCurrentSection} />
           <div className="flex-1 lg:p-8 lg:ml-64 mb-10">
-          <Header user={user} setUser={setUser} loading={loading} />
+          <Header />
             {renderSection()}
             {isModalOpen && selectedBadge && (
               <BadgePurchaseModal

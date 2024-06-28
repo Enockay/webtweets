@@ -4,14 +4,10 @@ import Countdown from './Countdown';
 import BadgeCard from './BadgeCard';
 import { AiOutlineFileImage } from 'react-icons/ai';
 import { FaRetweet } from 'react-icons/fa';
+import {User } from './Context';
 import { BsArrowRightShort } from 'react-icons/bs';
 import Profile from './Profile';
 
-interface User {
-  username: string;
-  profileImageUrl?: string;
-  badges: string[];
-}
 
 interface Tweet {
   id: string;

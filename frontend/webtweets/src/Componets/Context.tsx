@@ -7,8 +7,17 @@ interface SocialMedia {
   likes: number;
   profileImageUrl: string | undefined;
 }
+export interface Badge {
+  id: string;
+  name: string;
+  duration: string;
+  description: string;
+  priceKsh: string;
+  priceUsd: string;
+  benefits: string[];
+}
 
-interface User {
+export interface User { // Ensure this is exported
   profileImageUrl: string | undefined;
   badges: any[];
   createdAt: string;
@@ -25,12 +34,21 @@ interface User {
   _id: string;
 }
 
+export interface DecodedToken {
+  user: User;
+  exp: number;
+  iat: number;
+}
+
 interface UserContextType {
   user: User | null;
   setUser: React.Dispatch<React.SetStateAction<User | null>>;
   paymentMethod: 'paypal' | 'mpesa' | null;
   setPaymentMethod: React.Dispatch<React.SetStateAction<'paypal' | 'mpesa' | null>>;
   updateUser: (updates: Partial<User>) => void;
+  loginModalOpen: boolean;
+  openLoginModal: () => void;
+  closeLoginModal: () => void;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -38,15 +56,16 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<'paypal' | 'mpesa' | null>(null);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const decodedUser = jwtDecode<User>(token);
-        setUser(decodedUser);
+        const decodedToken = jwtDecode<DecodedToken>(token);
+        setUser(decodedToken.user)
       } catch (error) {
-        //console.error('Failed to decode token:', error);
+        console.error('Failed to decode token:', error);
         localStorage.removeItem('token');
       }
     }
@@ -55,12 +74,22 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const updateUser = (updates: Partial<User>) => {
     setUser(prevUser => {
       if (!prevUser) return null;
-      return { ...prevUser, ...updates };
+      const updatedUser = { ...prevUser, ...updates };
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      return updatedUser;
     });
   };
 
+  const openLoginModal = () => {
+    setLoginModalOpen(true);
+  };
+
+  const closeLoginModal = () => {
+    setLoginModalOpen(false);
+  };
+
   return (
-    <UserContext.Provider value={{ user, setUser, paymentMethod, setPaymentMethod, updateUser }}>
+    <UserContext.Provider value={{ user, setUser, paymentMethod, setPaymentMethod, updateUser, loginModalOpen, openLoginModal, closeLoginModal }}>
       {children}
     </UserContext.Provider>
   );

@@ -2,11 +2,13 @@
 import React, { useState } from 'react';
 import { FaTwitter } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const SignUp: React.FC = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,7 +20,7 @@ const SignUp: React.FC = () => {
       });
       const data = await response.json();
       if (response.ok) {
-        // Handle successful signup (e.g., redirect to login)
+        navigate("/login")
         console.log('Signup successful:', data);
       } else {
         // Handle error response

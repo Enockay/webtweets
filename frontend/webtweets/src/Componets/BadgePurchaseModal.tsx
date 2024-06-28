@@ -1,17 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
-import { useUser } from '../Componets/Context';
-
-interface Badge {
-  id: string;
-  name: string;
-  duration: string;
-  description: string;
-  priceKsh: string;
-  priceUsd: string;
-  benefits: string[];
-}
+import { useUser,Badge } from '../Componets/Context';
 
 interface BadgePurchaseModalProps {
   badge: Badge;

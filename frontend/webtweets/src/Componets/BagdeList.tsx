@@ -1,16 +1,5 @@
 import React from 'react';
-import { useUser } from '../Componets/Context';
-
-interface Badge {
-  id: string;
-  name: string;
-  duration: string;
-  description: string;
-  priceKsh: string;
-  priceUsd: string;
-  benefits: string[];
-}
-
+import { useUser,Badge } from '../Componets/Context';
 
 interface BadgeListProps {
   badgeOptions: Badge[];
