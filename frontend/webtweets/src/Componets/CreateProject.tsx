@@ -189,7 +189,7 @@ const CreateProject: React.FC = () => {
                 </div>
 
                 
-                <div className="mb-4">
+                <div className="mb-4 bg-gray-500 p-4 rounded">
                     <label className="block mb-2">Upload Media (Max 2 min video or image)</label>
                     <input
                         type="file"
@@ -202,8 +202,8 @@ const CreateProject: React.FC = () => {
                             <p className='text-cyan-300'>Uploaded File: <a href={fileURL} target="_blank" rel="noopener noreferrer">{file?.name}</a></p>
                         </div>
                     )}
-                </div>
-                <label className="block mb-2">Caption..</label>
+               
+                <label className="block mb-0">Caption..</label>
                 <input
                     className="w-full p-1 border rounded mb-4 text-slate-700"
                     value={content}
@@ -211,7 +211,7 @@ const CreateProject: React.FC = () => {
                     placeholder="Create a new post"
                     required
                 />
-
+              </div>
                 <div className="mb-4">
                     <label className="block mb-2">Post Schedule Time</label>
                     <input
