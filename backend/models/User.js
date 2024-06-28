@@ -19,16 +19,14 @@ const userSchema = new Schema({
     type: String
   },
   phoneNumber: {
-    type:String
+    type: String
   },
   badges: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Badge' }],
-
   hashtags: [
     {
       type: String
     }
   ],
-  
   email: {
     type: String,
     unique: true,
@@ -44,6 +42,24 @@ const userSchema = new Schema({
   isLive: {
     type: Boolean,
     default: false
+  },
+  tiktok: {
+    username: String,
+    followers: Number,
+    likes: Number,
+    profileImageUrl: String
+  },
+  instagram: {
+    username: String,
+    followers: Number,
+    likes: Number,
+    profileImageUrl: String
+  },
+  twitter: {
+    username: String,
+    followers: Number,
+    likes: Number,
+    profileImageUrl: String
   }
 });
 

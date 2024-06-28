@@ -1,11 +1,15 @@
-// src/Components/pages/Login.tsx
+// src/Components/LoginModal.tsx
 import React, { useState } from 'react';
 import { FaTwitter } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
 import { ClipLoader } from 'react-spinners';
 import { useUser } from '../Context';
+import { useNavigate } from 'react-router-dom';
 import { jwtDecode,JwtPayload } from 'jwt-decode';
 
+interface LoginModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 interface SocialMedia {
   username: string | undefined;
   followers: number;
@@ -29,13 +33,12 @@ interface User {
   __v: number;
   _id: string;
 }
-
-const Login: React.FC = () => {
+const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
   const { setUser } = useUser();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +57,7 @@ const Login: React.FC = () => {
         const decodedUser = jwtDecode<JwtPayload & User>(token);
         setUser(decodedUser as User);
         localStorage.setItem('token', token);
-        navigate('/Dashboard'); 
+        navigate('/Dashboard', { replace: true }); 
       } else {
         console.error('Login failed:', data);
       }
@@ -64,9 +67,11 @@ const Login: React.FC = () => {
     }
   };
 
+  if (!isOpen) return null;
+
   return (
-    <div className="flex items-center justify-center min-h-screen  bg-gray-600 p-4 sm:p-6 lg:p-8">
-      <div className=" fixed  max-w-md p-8 space-y-8 bg-gray-900 rounded-lg shadow-lg">
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-900 bg-opacity-75">
+      <div className="bg-white p-6 rounded-lg shadow-lg">
         <h4 className="text-xl font-extrabold text-center text-lime-400">Webtweets Login</h4>
         <p className="text-center text-green-400">Please enter your login and your password</p>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -111,19 +116,11 @@ const Login: React.FC = () => {
               Login with Twitter
             </a>
           </div>
-          <div className="flex items-center justify-center mt-4">
-            <p className="text-sm text-lime-400">Don't have an account?</p>
-            <Link
-              to="/signup"
-              className="ml-2 text-sm font-medium text-blue-500 hover:underline"
-            >
-              Sign Up
-            </Link>
-          </div>
         </form>
+        <button onClick={onClose} className="mt-4 text-red-500">Close</button>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default LoginModal;

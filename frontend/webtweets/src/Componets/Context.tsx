@@ -46,7 +46,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         const decodedUser = jwtDecode<User>(token);
         setUser(decodedUser);
       } catch (error) {
-        console.error('Failed to decode token:', error);
+        //console.error('Failed to decode token:', error);
         localStorage.removeItem('token');
       }
     }

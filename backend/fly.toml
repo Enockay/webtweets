@@ -11,6 +11,11 @@ primary_region = 'jnb'
 [env]
   MONGO_URI = 'mongodb+srv://myAtlasDBUser:Enockay23@bmgpfws.bfx6ekr.mongodb.net/Webtweets?retryWrites=true&w=majority'
   PORT = '3000'
+  TIKTOK_CLIENT_ID = 'awh3y2l4qe3z5a5c'
+  TIKTOK_CLIENT_SECRET = 'kvJPSiXqfhdeQnPHX15g34OKRyflYXUe'
+  INSTAGRAM_CLIENT_ID = '840372054180788'
+  INSTAGRAM_CLIENT_SECRET = '237a1db43e61d455d6d313fdef332542'
+  INSTAGRAM_CALLBACK_URL = 'http://yourdomain.com/auth/instagram/callback'
 
 [http_service]
   internal_port = 3000

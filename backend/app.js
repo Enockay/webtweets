@@ -12,7 +12,6 @@ require('dotenv').config();
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/dashboard');
 const authRoutes = require('./routes/auth');
-const { ensureAuthenticated } = require('./middleware/auth');
 const badge = require("./routes/Badge");
 const app = express();
 

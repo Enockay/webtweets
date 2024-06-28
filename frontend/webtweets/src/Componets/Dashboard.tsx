@@ -120,25 +120,6 @@ const Dashboard: React.FC = () => {
 
         return () => clearInterval(timer);
     }, []);
-
-    const handleLogout = async () => {
-    setLoading(true);
-     const logoutUser = await fetch('https://webtweets-dawn-forest-2637.fly.dev/auth/logout', {
-            method: 'POST',
-            headers:{
-                "Content-Type":"application/json"
-            },
-            credentials: 'include',
-            body :JSON.stringify(user)
-        });
-     const response = await logoutUser.json();
-     console.log(response);
-     if(response.success){
-        navigate("/login");
-        setUser(null);
-     }  
-    };
-
     const openModal = (badge: Badge) => {
         setSelectedBadge(badge);
         setIsModalOpen(true);
@@ -245,13 +226,7 @@ const Dashboard: React.FC = () => {
         <div className="flex flex-col lg:flex-row min-h-screen text-white">
           <Sidebar onSectionChange={setCurrentSection} />
           <div className="flex-1 lg:p-8 lg:ml-64 mb-10">
-            {user && (
-              <Header
-                username={user.username}
-                profileImageUrl={user.profileImageUrl || undefined} 
-                onLogout={handleLogout}
-              />
-            )}
+              <Header/>
             {renderSection()}
             {isModalOpen && selectedBadge && (
               <BadgePurchaseModal
