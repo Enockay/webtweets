@@ -210,17 +210,14 @@ const CreateProject: React.FC = () => {
                             <p className='text-cyan-300'>Uploaded File: <a href={fileURL} target="_blank" rel="noopener noreferrer">{file?.name}</a></p>
                         </div>
                     )}
-                </div>
-
-                <div className="mb-4">
-                    <label className="block mb-0">Caption</label>
+                 <label className="block mb-0">Caption</label>
                     <input
                         className="w-full p-1 border rounded mb-4 text-slate-700"
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Create a new post"
                         required
-                    />
+                    />   
                 </div>
 
                 <div className="mb-4">
