@@ -56,7 +56,7 @@ router.post('/projects/schedules', upload.single('file'), async (req, res) => {
     writestream.write(req.file.buffer);
     writestream.end();
   } catch (error) {
-    console.error('Error in post scheduling:', error); // Log the error for debugging
+    console.error('Error in post scheduling:', error);
     res.status(500).json({ error: error.message });
   }
 });
@@ -76,17 +76,16 @@ router.get('/projects/schedules', async (req, res) => {
           const file = await gfsBucket.find({ _id: new mongoose.Types.ObjectId(post.file) }).toArray();
           if (file.length > 0) {
             post = post.toObject();
-            post.fileURL = `/file/${post.file}`;
+            post.fileURL = `https://webtweets-dawn-forest-2637.fly.dev/schedules/file/${post.file}`;
             post.fileType = file[0].contentType; // Adding the file type to the post object
           }
         }
         return post;
       })
     );
-
     res.status(200).json(postsWithFiles);
   } catch (error) {
-    console.error('Error fetching schedules:', error); // Log the error for debugging
+    console.error('Error fetching schedules:', error);
     res.status(500).json({ error: 'Failed to fetch schedules' });
   }
 });
@@ -103,7 +102,7 @@ router.get('/file/:id', async (req, res) => {
     const readStream = gfsBucket.openDownloadStream(new mongoose.Types.ObjectId(req.params.id));
     readStream.pipe(res);
   } catch (error) {
-    console.error('Error retrieving file:', error); // Log the error for debugging
+    console.error('Error retrieving file:', error);
     res.status(500).json({ error: 'Failed to retrieve file' });
   }
 });
