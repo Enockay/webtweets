@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+
 import { ProjectSchedule } from './Context'; // Ensure to have the types defined in a types file
 
 interface ProjectScheduleTableProps {
@@ -8,13 +8,11 @@ interface ProjectScheduleTableProps {
 }
 
 const ProjectScheduleTable: React.FC<ProjectScheduleTableProps> = ({ projectSchedules, openModal, getStatusColor }) => {
-    useEffect(()=>{
-      console.log(projectSchedules)
-    },[])
+    
   return (
-    <section>
+    <section className='p-3'>
       <h4 className="text-xl font-bold mb-4">Project Schedules</h4>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-slate-600 min-h-60">
         <table className="min-w-full bg-gray-800">
           <thead>
             <tr>

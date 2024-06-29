@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import Countdown from './Countdown';
 import BadgeCard from './BadgeCard';
 import { AiOutlineFileImage } from 'react-icons/ai';
 import { FaRetweet } from 'react-icons/fa';
-import { User} from './Context';
+import { User } from './Context';
 import Profile from './Profile';
 import { getProjectSchedules } from './projectService'; // Adjust the import path as needed
 import ProjectScheduleTable from './ProjectScheduleTable';
-import MediaModal from './mediaModal'; // Import the new modal component
+import MediaModal from './mediaModal'; // Assuming a corrected import name for the modal component
 import ClipLoader from 'react-spinners/ClipLoader'; // Import ClipLoader for loading spinner
 import { ProjectSchedule } from './Context';
 
@@ -21,7 +20,6 @@ interface LiveUser {
   profileImageUrl: string;
 }
 
-
 interface Props {
   user?: User | null;
   pastTweets: Tweet[];
@@ -29,7 +27,7 @@ interface Props {
   timeLeft: number;
 }
 
-const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
+const HomePage: React.FC<Props> = ({ user, liveUsers }) => {
   const [suggestedTweet, setSuggestedTweet] = useState('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [selectedLiveUsers, setSelectedLiveUsers] = useState<string[]>([]);
@@ -119,9 +117,9 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
 
   return (
     <div className="container mx-auto p-4">
-      <Countdown timeLeft={timeLeft} />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mt-4">
-        <div className="lg:col-span-1">
+        {/* Left Column */}
+        <div className="order-first lg:order-last lg:col-span-1 max-h-screen overflow-y-auto scrollbar-hide">
           <section className="mb-4">
             <h3 className="font-bold mb-2">Live Users</h3>
             <div className="flex flex-wrap">
@@ -155,15 +153,16 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
           </div>
         </div>
 
-        <div className="lg:col-span-2 h-screen overflow-y-auto scrollbar-hide">
+        {/* Right Column */}
+        <div className="lg:col-span-2 max-h-screen overflow-y-auto scrollbar-hide">
           <section className="mb-4 lg:mb-8">
             <h3 className="font-bold mb-4 text-red-400">Badges</h3>
-            <div className="max-w-96">
+            <div className="flex text-center">
               <BadgeCard badgeIds={user?.badges || []} />
             </div>
           </section>
           <section className="mb-4 lg:mb-8">
-            <h4 className="text-xl font-bold mb-4 text-green-600">Suggest a Tweet</h4>
+            <h4 className="text-xl font-bold mb-4 text-green-600">Latest Treads</h4>
             <div className="relative flex items-center">
               <div className="relative group">
                 <button className="text-blue-500 mr-2">@</button>
@@ -214,6 +213,7 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
         </div>
       </div>
 
+      {/* Media Modal */}
       {modalIsOpen && modalContent && (
         <MediaModal
           isOpen={modalIsOpen}

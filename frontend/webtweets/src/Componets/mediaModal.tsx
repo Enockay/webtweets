@@ -19,7 +19,7 @@ const MediaModal: React.FC<MediaModalProps> = ({ isOpen, fileURL, fileType, onRe
     >
       <div className="bg-white p-4 rounded-lg shadow-lg">
         {fileType.startsWith('image/') && (
-          <img src={fileURL} alt="Full Preview" className="w-60 h-auto" />
+          <img src={fileURL} alt="Full Preview" className="w-64 h-auto" />
         )}
         {fileType.startsWith('video/') && (
           <video controls className="w-80 h-auto">
