@@ -8,11 +8,12 @@ const socialMediaSchema = new mongoose.Schema({
 }, { _id: false });
 
 const postSchema = new mongoose.Schema({
-  content: { type: String, required: true },
+  content: { type: String, required: false },
   scheduledTime: { type: Date, required: true },
   platform: { type: String, required: true },
   file: { type: String },
-  tags: { type: String, required: true },
+  tags: { type: String, required: false},
+  status:{type:String,required:true},
   userDetails: { type: socialMediaSchema, required: true },
 });
 

@@ -19,10 +19,10 @@ interface LiveUser {
 
 interface ProjectSchedule {
   id: string;
-  status: string;
+  status: string | 'Scheduled';
   platform: string;
   content: string;
-  mediaItem: string | null;
+  fileURL: string | null;
   scheduledTime: string;
   userDetails: SocialMedia;
 }
@@ -66,7 +66,7 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
       // Filter out any undefined values from userIds
       const filteredUserIds = userIds.filter((id): id is string => id !== undefined);
 
-      if (filteredUserIds) {
+      if (filteredUserIds.length > 0) {
         try {
           const schedules = await getProjectSchedules({ username: filteredUserIds }, platforms);
           setProjectSchedules(schedules);
@@ -92,7 +92,6 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
         : [...prevSelected, username]
     );
   };
-
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -184,11 +183,10 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
                 onChange={(e) => setSuggestedTweet(e.target.value)}
                 className="flex-grow bg-gray-700 text-white rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-             
             </div>
             {uploadedImage && (
               <div className="mt-4">
-                <img src={uploadedImage} alt="Uploaded" className="w-32 h-32 object-cover rounded" />
+                <img src={uploadedImage} alt="Uploaded" className="w-12 h-12 object-cover rounded" />
               </div>
             )}
           </section>
@@ -209,15 +207,17 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
                 <tbody>
                   {projectSchedules.map((schedule) => (
                     <tr key={schedule.id} className="hover:bg-gray-800">
-                      <td className="py-2 px-4 border-b border-gray-700">{schedule.scheduledTime}</td>
+                      <td className="py-2 px-4 border-b border-gray-700">{new Date(schedule.scheduledTime).toLocaleString()}</td>
                       <td className="py-2 px-4 border-b border-gray-700">{schedule.platform}</td>
                       <td className="py-2 px-4 border-b border-gray-700">{schedule.content}</td>
                       <td className={`py-2 px-4 border-b border-gray-700 ${getStatusColor(schedule.status)}`}>{schedule.status}</td>
                       <td className="py-2 px-4 border-b border-gray-700">
-                        {schedule.mediaItem ? (
-                          <img src={schedule.mediaItem} alt="Media" className="w-16 h-16 object-cover rounded" />
+                        {schedule.fileURL ? (
+                          <a href={schedule.fileURL} target="_blank" rel="noopener noreferrer">
+                            View File
+                          </a>
                         ) : (
-                          'N/A'
+                          'No File'
                         )}
                       </td>
                       <td className="py-2 px-4 border-b border-gray-700">
@@ -225,8 +225,6 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
                           <div>
                             <img src={schedule.userDetails.profileImageUrl} alt="Profile" className="w-8 h-8 rounded-full object-cover inline-block mr-2" />
                             <span>{schedule.userDetails.username}</span>
-                            <div>Followers: {schedule.userDetails.followers}</div>
-                            <div>Likes: {schedule.userDetails.likes}</div>
                           </div>
                         )}
                       </td>
