@@ -1,14 +1,16 @@
 import React from 'react';
 import Modal from 'react-modal';
+import ClipLoader from 'react-spinners/ClipLoader';
 
 interface MediaModalProps {
   isOpen: boolean;
   fileURL: string;
   fileType: string;
   onRequestClose: () => void;
+  isLoading: boolean; // Receive the loading state
 }
 
-const MediaModal: React.FC<MediaModalProps> = ({ isOpen, fileURL, fileType, onRequestClose }) => {
+const MediaModal: React.FC<MediaModalProps> = ({ isOpen, fileURL, fileType, onRequestClose, isLoading }) => {
   return (
     <Modal
       isOpen={isOpen}
@@ -18,14 +20,22 @@ const MediaModal: React.FC<MediaModalProps> = ({ isOpen, fileURL, fileType, onRe
       overlayClassName="bg-black bg-opacity-50 fixed inset-0"
     >
       <div className="bg-white p-4 rounded-lg shadow-lg">
-        {fileType.startsWith('image/') && (
-          <img src={fileURL} alt="Full Preview" className="w-64 h-auto" />
-        )}
-        {fileType.startsWith('video/') && (
-          <video controls className="w-80 h-auto">
-            <source src={fileURL} type={fileType} />
-            Your browser does not support the video tag.
-          </video>
+        {isLoading ? (
+          <div className="flex justify-center items-center">
+            <ClipLoader color="green" loading={isLoading} size={50} />
+          </div>
+        ) : (
+          <>
+            {fileType.startsWith('image/') && (
+              <img src={fileURL} alt="Full Preview" className="w-64 h-auto" />
+            )}
+            {fileType.startsWith('video/') && (
+              <video controls className="w-80 h-auto">
+                <source src={fileURL} type={fileType} />
+                Your browser does not support the video tag.
+              </video>
+            )}
+          </>
         )}
         <button
           onClick={onRequestClose}

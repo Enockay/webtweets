@@ -34,6 +34,7 @@ const HomePage: React.FC<Props> = ({ user, liveUsers }) => {
   const [isProfileVisible, setIsProfileVisible] = useState(false);
   const [projectSchedules, setProjectSchedules] = useState<ProjectSchedule[]>([]);
   const [loading, setLoading] = useState(true); // Add loading state
+  const [modalIsLoading, setModalIsLoading] = useState(false); // Add modal loading state
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [modalContent, setModalContent] = useState<{ fileURL: string; fileType: string } | null>(null);
 
@@ -98,6 +99,11 @@ const HomePage: React.FC<Props> = ({ user, liveUsers }) => {
   const openModal = (fileURL: string, fileType: string) => {
     setModalContent({ fileURL, fileType });
     setModalIsOpen(true);
+    setModalIsLoading(true);
+    // Simulate fetching the file URL (this should be replaced with actual fetch logic)
+    setTimeout(() => {
+      setModalIsLoading(false);
+    }, 1000); // Simulate loading time
   };
 
   const closeModal = () => {
@@ -220,6 +226,7 @@ const HomePage: React.FC<Props> = ({ user, liveUsers }) => {
           fileURL={modalContent.fileURL}
           fileType={modalContent.fileType}
           onRequestClose={closeModal}
+          isLoading={modalIsLoading} // Pass the loading state to the modal
         />
       )}
     </div>
