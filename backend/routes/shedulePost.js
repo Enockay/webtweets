@@ -30,10 +30,7 @@ router.post('/projects/schedules', upload.single('file'), async (req, res) => {
       throw new Error('File upload failed');
     }
 
-    const { content, scheduledTime, platform, tags, userDetails ,state} = req.body;
-   // console.log('Request body:', req.body);
-   // console.log('Uploaded file details:', req.file);
-
+    const { content, scheduledTime, platform, tags, userDetails, state } = req.body;
     const writestream = gfsBucket.openUploadStream(req.file.originalname, {
       contentType: req.file.mimetype,
       metadata: {
@@ -42,7 +39,6 @@ router.post('/projects/schedules', upload.single('file'), async (req, res) => {
     });
 
     writestream.on('finish', async () => {
-      console.log('File written to GridFS with ID:', writestream.id);
       const post = new Post({
         state,
         content,
@@ -65,7 +61,6 @@ router.post('/projects/schedules', upload.single('file'), async (req, res) => {
   }
 });
 
-// Get scheduled posts
 router.get('/projects/schedules', async (req, res) => {
   try {
     const { userIds, platforms } = req.query;
@@ -82,6 +77,7 @@ router.get('/projects/schedules', async (req, res) => {
           if (file.length > 0) {
             post = post.toObject();
             post.fileURL = `/file/${post.file}`;
+            post.fileType = file[0].contentType; // Adding the file type to the post object
           }
         }
         return post;
