@@ -1,4 +1,3 @@
-
 import { ProjectSchedule } from './Context'; // Ensure to have the types defined in a types file
 
 interface ProjectScheduleTableProps {
@@ -8,9 +7,8 @@ interface ProjectScheduleTableProps {
 }
 
 const ProjectScheduleTable: React.FC<ProjectScheduleTableProps> = ({ projectSchedules, openModal, getStatusColor }) => {
-   console.log(projectSchedules) 
   return (
-    <section className='p-3'>
+    <section className="p-3">
       <h4 className="text-xl font-bold mb-4">Project Schedules</h4>
       <div className="overflow-x-auto bg-slate-600 min-h-60 scrollbar-hide">
         <table className="min-w-full bg-gray-800">
@@ -39,7 +37,7 @@ const ProjectScheduleTable: React.FC<ProjectScheduleTableProps> = ({ projectSche
                           <img
                             src={schedule.fileURL}
                             alt="img"
-                            className="max-w-10 h-auto cursor-pointer"
+                            className="max-w-20 max-h-20 object-contain cursor-pointer" // Adjust the dimensions to fit within the table cell
                             onClick={() => openModal(schedule.fileURL as string, schedule.fileType as string)}
                           />
                         </center>
@@ -48,7 +46,7 @@ const ProjectScheduleTable: React.FC<ProjectScheduleTableProps> = ({ projectSche
                         <center>
                           <video
                             controls
-                            className="max-w-10 h-auto cursor-pointer"
+                            className="max-w-20 max-h-20 object-contain cursor-pointer" // Adjust the dimensions to fit within the table cell
                             onClick={() => openModal(schedule.fileURL as string, schedule.fileType as string)}
                           >
                             <source src={schedule.fileURL} type={schedule.fileType} />
@@ -63,7 +61,7 @@ const ProjectScheduleTable: React.FC<ProjectScheduleTableProps> = ({ projectSche
                 </td>
                 <td className="py-2 px-4 border-b border-gray-700">
                   {schedule.userDetails && (
-                    <div className="">
+                    <div className="flex items-center">
                       <img
                         src={schedule.userDetails.profileImageUrl}
                         alt="Profile"
