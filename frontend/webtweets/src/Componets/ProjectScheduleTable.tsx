@@ -8,7 +8,7 @@ interface ProjectScheduleTableProps {
 }
 
 const ProjectScheduleTable: React.FC<ProjectScheduleTableProps> = ({ projectSchedules, openModal, getStatusColor }) => {
-    
+   console.log(projectSchedules) 
   return (
     <section className='p-3'>
       <h4 className="text-xl font-bold mb-4">Project Schedules</h4>
