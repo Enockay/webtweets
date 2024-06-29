@@ -232,7 +232,7 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
                       </td>
                       <td className="py-2 px-4 border-b border-gray-700">
                         {schedule.userDetails && (
-                          <div>
+                          <div className='flex'>
                             <img src={schedule.userDetails.profileImageUrl} alt="Profile" className="w-8 h-8 rounded-full object-cover inline-block mr-2" />
                             <span>{schedule.userDetails.username}</span>
                           </div>
