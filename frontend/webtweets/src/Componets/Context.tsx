@@ -51,6 +51,22 @@ interface UserContextType {
   closeLoginModal: () => void;
 }
 
+export interface ProjectSchedule {
+  id: string;
+  state: string;
+  platform: string;
+  content: string;
+  fileURL: string | null;
+  fileType: string | null;
+  scheduledTime: string;
+  userDetails: {
+    username: string;
+    followers: number;
+    likes: number;
+    profileImageUrl: string;
+  };
+}
+
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) => {

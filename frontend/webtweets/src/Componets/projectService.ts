@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { ProjectSchedule } from './Context';
 const API_URL = 'https://webtweets-dawn-forest-2637.fly.dev/schedules';
 
 interface UserDetails {
@@ -54,13 +54,30 @@ export const requestPermissions = async () => {
   return response.data;
 };
 
-export const getProjectSchedules = async (userIds: UserIds, platforms: string[]) => {
-  console.log("triggerd")
+export const getProjectSchedules = async (userIds: UserIds, platforms: string[]): Promise<ProjectSchedule[]> => {
   const response = await axios.get(`${API_URL}/projects/schedules`, {
     params: {
-      userIds: userIds.username, // Adjusted to send only the usernames array
+      userIds: userIds.username,
       platforms,
     },
   });
-  return response.data;
+
+  // Map the response data to the ProjectSchedule type
+  const projectSchedules: ProjectSchedule[] = response.data.map((schedule: any) => ({
+    id: schedule._id,
+    state: schedule.state,
+    platform: schedule.platform,
+    content: schedule.content,
+    fileURL: schedule.fileURL || null,
+    fileType: schedule.fileType || null,
+    scheduledTime: schedule.scheduledTime,
+    userDetails: {
+      username: schedule.userDetails.username,
+      followers: schedule.userDetails.followers,
+      likes: schedule.userDetails.likes,
+      profileImageUrl: schedule.userDetails.profileImageUrl,
+    },
+  }));
+
+  return projectSchedules;
 };
