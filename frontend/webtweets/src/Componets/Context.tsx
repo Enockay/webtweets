@@ -1,7 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 import {jwtDecode} from 'jwt-decode';
 
-interface SocialMedia {
+export interface SocialMedia {
   username: string | undefined;
   followers: number;
   likes: number;

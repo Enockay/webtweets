@@ -1,15 +1,23 @@
 const mongoose = require('mongoose');
 
+const socialMediaSchema = new mongoose.Schema({
+  username: { type: String },
+  followers: { type: Number },
+  likes: { type: Number },
+  profileImageUrl: { type: String },
+}, { _id: false });
+
 const postSchema = new mongoose.Schema({
   content: { type: String, required: true },
+  scheduledTime: { type: Date, required: true },
   platform: { type: String, required: true },
-  scheduleTime: { type: Date, required: true },
-  status: { type: String, default: 'pending' },
-  analytics: {
-    likes: { type: Number, default: 0 },
-    comments: { type: Number, default: 0 },
-    shares: { type: Number, default: 0 },
-  },
+  file: { type: String },
+  tags: { type: String, required: true },
+  userDetails: { type: socialMediaSchema, required: true },
 });
+
+
+
+
 
 module.exports = mongoose.model('Post', postSchema);

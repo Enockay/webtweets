@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { schedulePost, linkAccount, requestPermissions } from './projectService';
-import { useUser } from '../Componets/Context';
+import { useUser } from './Context';
 import { ClipLoader } from 'react-spinners';
 import Analytics from './Analytics';
 import Modal from 'react-modal';
@@ -23,6 +23,7 @@ const CreateProject: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [confirmationModalIsOpen, setConfirmationModalIsOpen] = useState(false);
+    const [linkAccountModalIsOpen, setLinkAccountModalIsOpen] = useState(false);
     const [modalContent, setModalContent] = useState('');
     const { user } = useUser();
     const navigate = useNavigate();
@@ -50,6 +51,14 @@ const CreateProject: React.FC = () => {
         setConfirmationModalIsOpen(false);
     };
 
+    const openLinkAccountModal = () => {
+        setLinkAccountModalIsOpen(true);
+    };
+
+    const closeLinkAccountModal = () => {
+        setLinkAccountModalIsOpen(false);
+    };
+
     const handleLinkAccount = async (platform: string) => {
         setLoading(true);
         openModal(`Linking ${platform} account...`);
@@ -74,8 +83,29 @@ const CreateProject: React.FC = () => {
         setLoading(true);
         closeConfirmationModal();
         openModal(`Scheduling post...`);
+        
+        const platformDetails = () => {
+            switch (platform) {
+                case 'twitter':
+                    return user?.twitter;
+                case 'tiktok':
+                    return user?.tiktok;
+                case 'instagram':
+                    return user?.instagram;
+                default:
+                    return null;
+            }
+        };
+
+        const userDetails = platformDetails();
+        if (!userDetails) {
+            closeModal();
+            openLinkAccountModal();
+            return;
+        }
+
         try {
-            await schedulePost({ content, scheduledTime, platform, file, tags });
+            await schedulePost({ content, scheduledTime, platform, file, tags, userDetails });
             setContent('');
             setScheduledTime('');
             setPlatform('');
@@ -199,25 +229,25 @@ const CreateProject: React.FC = () => {
                     {fileURL && (
                         <div className="mt-2">
                             {file && file.type.startsWith('image/') && (
-                              <center><img src={fileURL} alt="Preview" className="max-w-80 h-auto" /></center>  
+                                <center><img src={fileURL} alt="Preview" className="max-w-80 h-auto" /></center>
                             )}
                             {file && file.type.startsWith('video/') && (
-                              <center> <video controls className="max-w-72 h-auto">
-                              <source src={fileURL} type={file.type} />
-                              Your browser does not support the video tag.
-                          </video></center> 
+                                <center>
+                                    <video controls className="max-w-72 h-auto">
+                                        <source src={fileURL} type={file.type} />
+                                        Your browser does not support the video tag.
+                                    </video>
+                                </center>
                             )}
-                            <p className='text-cyan-300'>Uploaded File: <a href={fileURL} target="_blank" rel="noopener noreferrer">{file?.name}</a></p>
                         </div>
                     )}
-                 <label className="block mb-0">Caption</label>
+                    <label className="block mb-0">Caption</label>
                     <input
                         className="w-full p-1 border rounded mb-4 text-slate-700"
                         value={content}
                         onChange={(e) => setContent(e.target.value)}
                         placeholder="Create a new post"
-                        required
-                    />   
+                    />
                 </div>
 
                 <div className="mb-4">
@@ -297,6 +327,27 @@ const CreateProject: React.FC = () => {
                         Confirm
                     </button>
                     <button className="p-2 bg-red-500 text-white rounded" onClick={closeConfirmationModal}>
+                        Cancel
+                    </button>
+                </div>
+            </Modal>
+
+            <Modal
+                isOpen={linkAccountModalIsOpen}
+                onRequestClose={closeLinkAccountModal}
+                contentLabel="Link Account Modal"
+                className="bg-green-300 p-4 rounded shadow-lg w-80 mx-auto mt-24"
+                overlayClassName="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center"
+            >
+                <h2 className="text-xl mb-4 text-red-800 text-center">Link Account</h2>
+                <div className="flex flex-col items-center">
+                    <p>Your account for the selected platform is not linked. Would you like to link your {platform} account?</p>
+                </div>
+                <div className="mt-4 flex space-x-4">
+                    <button className="p-2 bg-blue-500 text-white rounded" onClick={() => handleLinkAccount(platform)}>
+                        Link {platform}
+                    </button>
+                    <button className="p-2 bg-red-500 text-white rounded" onClick={closeLinkAccountModal}>
                         Cancel
                     </button>
                 </div>

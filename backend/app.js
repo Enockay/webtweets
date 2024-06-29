@@ -14,7 +14,7 @@ const usersRouter = require('./routes/dashboard');
 const authRoutes = require('./routes/auth');
 const badge = require("./routes/Badge");
 const app = express();
-
+const schedule = require("./routes/shedulePost");
 const secret = 'aOpJFUXdhe4Nt5i5RAKzbuStAPCLK5joDSqqUlfdtZg=';
 const allowedOrigins = ['https://webtweets.vercel.app', 'http://localhost:5173', 'http://localhost:5174'];
 
@@ -56,6 +56,7 @@ app.use('/', indexRouter);
 app.use('/api',  usersRouter);
 app.use('/auth', authRoutes);
 app.use('/badges', badge);
+app.use("/schedules",schedule)
 
 app.use((req, res, next) => {
   next(createError(404));

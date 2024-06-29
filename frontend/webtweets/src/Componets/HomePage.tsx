@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import Countdown from './Countdown';
 import BadgeCard from './BadgeCard';
 import { AiOutlineFileImage } from 'react-icons/ai';
 import { FaRetweet } from 'react-icons/fa';
-import { User } from './Context';
+import { User, SocialMedia } from './Context';
 import Profile from './Profile';
 import { getProjectSchedules } from './projectService'; // Adjust the import path as needed
 
@@ -25,6 +24,7 @@ interface ProjectSchedule {
   content: string;
   mediaItem: string | null;
   scheduledTime: string;
+  userDetails: SocialMedia;
 }
 
 interface Props {
@@ -38,50 +38,46 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
   const [suggestedTweet, setSuggestedTweet] = useState('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [selectedLiveUsers, setSelectedLiveUsers] = useState<string[]>([]);
-  const [userSuggestedHashtags, setUserSuggestedHashtags] = useState<string[]>([]);
-  const [chatGptResponse, setChatGptResponse] = useState<string>('');
   const [isProfileVisible, setIsProfileVisible] = useState(false);
   const [projectSchedules, setProjectSchedules] = useState<ProjectSchedule[]>([]);
 
   useEffect(() => {
     const fetchProjectSchedules = async () => {
-      try {
-        const schedules = await getProjectSchedules();
-        setProjectSchedules(schedules);
-      } catch (error) {
-        console.error('Error fetching project schedules:', error);
-        // Use dummy data when fetching fails or returns empty
-        setProjectSchedules([
-          {
-            id: '1',
-            status: 'Scheduled',
-            platform: 'Twitter',
-            content: 'Check out our new feature! #newfeature #launch',
-            mediaItem: null,
-            scheduledTime: new Date().toISOString(),
-          },
-          {
-            id: '2',
-            status: 'Posted',
-            platform: 'Facebook',
-            content: 'We are excited to announce our latest update! #update #announcement',
-            mediaItem: null,
-            scheduledTime: new Date().toISOString(),
-          },
-          {
-            id: '3',
-            status: 'Scheduled',
-            platform: 'Instagram',
-            content: 'Sneak peek of our upcoming release! #sneakpeek #comingsoon',
-            mediaItem: 'https://via.placeholder.com/150',
-            scheduledTime: new Date().toISOString(),
-          },
-        ]);
+      if (!user) return;
+
+      const userIds = [];
+      const platforms = [];
+
+      if (user.tiktok) {
+        userIds.push(user.tiktok.username);
+        platforms.push('tiktok');
+      }
+
+      if (user.instagram) {
+        userIds.push(user.instagram.username);
+        platforms.push('instagram');
+      }
+
+      if (user.twitter) {
+        userIds.push(user.twitter.username);
+        platforms.push('twitter');
+      }
+
+      // Filter out any undefined values from userIds
+      const filteredUserIds = userIds.filter((id): id is string => id !== undefined);
+
+      if (filteredUserIds) {
+        try {
+          const schedules = await getProjectSchedules({ username: filteredUserIds }, platforms);
+          setProjectSchedules(schedules);
+        } catch (error) {
+          console.error('Error fetching project schedules:', error);
+        }
       }
     };
 
     fetchProjectSchedules();
-  }, []);
+  }, [user]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -97,18 +93,15 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
     );
   };
 
-  const handleSuggestTweet = async () => {
-    console.log('Suggested Tweet:', suggestedTweet, 'Image:', uploadedImage, 'Tagged Users:', selectedLiveUsers);
 
-    const hashtagsInTweet = suggestedTweet.match(/#\w+/g) || [];
-    const newHashtags = hashtagsInTweet.map((tag) => tag.slice(1));
-    setUserSuggestedHashtags((prevHashtags) => Array.from(new Set([...prevHashtags, ...newHashtags])));
-
-    try {
-      const response = await axios.post('/api/chatgpt/suggest-tweet', { suggestedTweet });
-      setChatGptResponse(response.data.suggestion);
-    } catch (error) {
-      console.error('Error suggesting tweet:', error);
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'Scheduled':
+        return 'text-yellow-500';
+      case 'Posted':
+        return 'text-green-500';
+      default:
+        return 'text-red-500';
     }
   };
 
@@ -177,97 +170,68 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
                       onChange={handleImageUpload}
                       className="hidden"
                     />
-                    <button className="flex items-center space-x-2" onClick={() => alert('Retweet')}>
+                    <button className="flex items-center space-x-2">
                       <FaRetweet size={24} />
                       <span>Retweet</span>
                     </button>
-                    <div className="flex flex-col">
-                      {userSuggestedHashtags.map((hashtag, index) => (
-                        <button key={index} className="flex items-center space-x-2" onClick={() => setSuggestedTweet((prevTweet) => `${prevTweet} #${hashtag}`)}>
-                          <span>#</span>
-                          <span>{hashtag}</span>
-                        </button>
-                      ))}
-                    </div>
                   </div>
                 </div>
               </div>
               <input
+                type="text"
+                placeholder="What's happening?"
                 value={suggestedTweet}
                 onChange={(e) => setSuggestedTweet(e.target.value)}
-                className="w-full p-2 border rounded text-black bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="What's happening?"
+                className="flex-grow bg-gray-700 text-white rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button
-                onClick={handleSuggestTweet}
-                className="ml-2 bg-blue-600 text-white rounded p-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                Tweet
-              </button>
+             
             </div>
             {uploadedImage && (
               <div className="mt-4">
-                <img src={uploadedImage} alt="Uploaded" className="max-w-full h-auto rounded-lg" />
-              </div>
-            )}
-            {chatGptResponse && (
-              <div className="mt-4 p-2 border border-green-500 rounded bg-green-100 text-green-800">
-                <strong>Suggestion:</strong> {chatGptResponse}
+                <img src={uploadedImage} alt="Uploaded" className="w-32 h-32 object-cover rounded" />
               </div>
             )}
           </section>
-          {/* Project Schedules Section */}
-          <section className="mt-4 lg:mt-8 min-h-80 bg-green-800 p-4 rounded">
-            <h4 className="text-xl font-bold mb-4 text-yellow-400">Project Schedules</h4>
+          <section>
+            <h4 className="text-xl font-bold mb-4">Project Schedules</h4>
             <div className="overflow-x-auto">
-              <table className="min-w-full table-auto border-collapse">
+              <table className="min-w-full bg-gray-800">
                 <thead>
-                  <tr className="bg-gray-700 text-white">
-                    <th className="py-2 px-4 border-b border-gray-700">Scheduled Time</th>
-                    <th className="py-2 px-4 border-b border-gray-700">Media</th>
+                  <tr>
+                    <th className="py-2 px-4 border-b border-gray-700">Time</th>
                     <th className="py-2 px-4 border-b border-gray-700">Platform</th>
-                    <th className="py-2 px-4 border-b border-gray-700">Hashtags</th>
+                    <th className="py-2 px-4 border-b border-gray-700">Content</th>
                     <th className="py-2 px-4 border-b border-gray-700">Status</th>
+                    <th className="py-2 px-4 border-b border-gray-700">Media</th>
+                    <th className="py-2 px-4 border-b border-gray-700">User Details</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {projectSchedules.length > 0 ? (
-                    projectSchedules.map((schedule) => (
-                      <tr key={schedule.id} className="text-center">
-                        <td className="py-2 px-4 border-b border-gray-700">{new Date(schedule.scheduledTime).toLocaleString()}</td>
-                        <td className="py-2 px-4 border-b border-gray-700">
-                          {schedule.mediaItem ? <img src={schedule.mediaItem} alt="Media" className="w-12 h-12 object-cover rounded-lg mx-auto" /> : 'No Media'}
-                        </td>
-                        <td className="py-2 px-4 border-b border-gray-700">{schedule.platform}</td>
-                        <td className="py-2 px-4 border-b border-gray-700">{schedule.content.match(/#\w+/g)?.join(', ') || 'No Hashtags'}</td>
-                        <td className="py-2 px-4 border-b border-gray-700">{schedule.status}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <>
-                      <tr className="text-center">
-                        <td className="py-2 px-4 border-b border-gray-700">{new Date().toLocaleString()}</td>
-                        <td className="py-2 px-4 border-b border-gray-700">No Media</td>
-                        <td className="py-2 px-4 border-b border-gray-700">Twitter</td>
-                        <td className="py-2 px-4 border-b border-gray-700">#example, #project</td>
-                        <td className="py-2 px-4 border-b border-gray-700">Scheduled</td>
-                      </tr>
-                      <tr className="text-center">
-                        <td className="py-2 px-4 border-b border-gray-700">{new Date().toLocaleString()}</td>
-                        <td className="py-2 px-4 border-b border-gray-700">No Media</td>
-                        <td className="py-2 px-4 border-b border-gray-700">Facebook</td>
-                        <td className="py-2 px-4 border-b border-gray-700">#example, #project</td>
-                        <td className="py-2 px-4 border-b border-gray-700">Posted</td>
-                      </tr>
-                      <tr className="text-center">
-                        <td className="py-2 px-4 border-b border-gray-700">{new Date().toLocaleString()}</td>
-                        <td className="py-2 px-4 border-b border-gray-700"><img src="https://via.placeholder.com/150" alt="Media" className="w-12 h-12 object-cover rounded-lg mx-auto" /></td>
-                        <td className="py-2 px-4 border-b border-gray-700">Instagram</td>
-                        <td className="py-2 px-4 border-b border-gray-700">#example, #project</td>
-                        <td className="py-2 px-4 border-b border-gray-700">Scheduled</td>
-                      </tr>
-                    </>
-                  )}
+                  {projectSchedules.map((schedule) => (
+                    <tr key={schedule.id} className="hover:bg-gray-800">
+                      <td className="py-2 px-4 border-b border-gray-700">{schedule.scheduledTime}</td>
+                      <td className="py-2 px-4 border-b border-gray-700">{schedule.platform}</td>
+                      <td className="py-2 px-4 border-b border-gray-700">{schedule.content}</td>
+                      <td className={`py-2 px-4 border-b border-gray-700 ${getStatusColor(schedule.status)}`}>{schedule.status}</td>
+                      <td className="py-2 px-4 border-b border-gray-700">
+                        {schedule.mediaItem ? (
+                          <img src={schedule.mediaItem} alt="Media" className="w-16 h-16 object-cover rounded" />
+                        ) : (
+                          'N/A'
+                        )}
+                      </td>
+                      <td className="py-2 px-4 border-b border-gray-700">
+                        {schedule.userDetails && (
+                          <div>
+                            <img src={schedule.userDetails.profileImageUrl} alt="Profile" className="w-8 h-8 rounded-full object-cover inline-block mr-2" />
+                            <span>{schedule.userDetails.username}</span>
+                            <div>Followers: {schedule.userDetails.followers}</div>
+                            <div>Likes: {schedule.userDetails.likes}</div>
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
             </div>
