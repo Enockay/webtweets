@@ -10,6 +10,7 @@ interface UserDetails {
 }
 
 interface Post {
+  state:string;
   content: string;
   scheduledTime: string;
   platform: string;
@@ -31,7 +32,7 @@ export const schedulePost = async (post: Post) => {
     formData.append('file', post.file);
   }
   formData.append('tags', post.tags);
-
+  formData.append('state',post.state);
   formData.append('userDetails', JSON.stringify(post.userDetails)); // Add user details
 
   const response = await axios.post(`${API_URL}/projects/schedules`, formData, {

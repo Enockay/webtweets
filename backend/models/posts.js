@@ -13,7 +13,7 @@ const postSchema = new mongoose.Schema({
   platform: { type: String, required: true },
   file: { type: String },
   tags: { type: String, required: false},
-  status:{type:String,required:true},
+  state:{type:String,required:true},
   userDetails: { type: socialMediaSchema, required: true },
 });
 

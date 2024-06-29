@@ -20,6 +20,7 @@ const CreateProject: React.FC = () => {
     const [file, setFile] = useState<File | null>(null);
     const [fileURL, setFileURL] = useState<string | null>(null);
     const [tags, setTags] = useState('');
+    const [state, setState] = useState('Schedule');
     const [loading, setLoading] = useState(false);
     const [modalIsOpen, setModalIsOpen] = useState(false);
     const [confirmationModalIsOpen, setConfirmationModalIsOpen] = useState(false);
@@ -103,9 +104,9 @@ const CreateProject: React.FC = () => {
             openLinkAccountModal();
             return;
         }
-
+       setState('Schedule');
         try {
-            await schedulePost({ content, scheduledTime, platform, file, tags, userDetails });
+            await schedulePost({ state,content, scheduledTime, platform, file, tags, userDetails });
             setContent('');
             setScheduledTime('');
             setPlatform('');

@@ -30,7 +30,7 @@ router.post('/projects/schedules', upload.single('file'), async (req, res) => {
       throw new Error('File upload failed');
     }
 
-    const { content, scheduledTime, platform, tags, userDetails } = req.body;
+    const { content, scheduledTime, platform, tags, userDetails ,state} = req.body;
    // console.log('Request body:', req.body);
    // console.log('Uploaded file details:', req.file);
 
@@ -44,6 +44,7 @@ router.post('/projects/schedules', upload.single('file'), async (req, res) => {
     writestream.on('finish', async () => {
       console.log('File written to GridFS with ID:', writestream.id);
       const post = new Post({
+        state,
         content,
         scheduledTime,
         platform,

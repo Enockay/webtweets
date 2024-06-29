@@ -19,7 +19,7 @@ interface LiveUser {
 
 interface ProjectSchedule {
   id: string;
-  status: string | 'Scheduled';
+  state: string | 'Scheduled';
   platform: string;
   content: string;
   fileURL: string | null;
@@ -210,15 +210,25 @@ const HomePage: React.FC<Props> = ({ user, liveUsers, timeLeft }) => {
                       <td className="py-2 px-4 border-b border-gray-700">{new Date(schedule.scheduledTime).toLocaleString()}</td>
                       <td className="py-2 px-4 border-b border-gray-700">{schedule.platform}</td>
                       <td className="py-2 px-4 border-b border-gray-700">{schedule.content}</td>
-                      <td className={`py-2 px-4 border-b border-gray-700 ${getStatusColor(schedule.status)}`}>{schedule.status}</td>
+                      <td className={`py-2 px-4 border-b border-gray-700 ${getStatusColor(schedule.state)}`}>{schedule.state}</td>
                       <td className="py-2 px-4 border-b border-gray-700">
-                        {schedule.fileURL ? (
-                          <a href={schedule.fileURL} target="_blank" rel="noopener noreferrer">
-                            View File
-                          </a>
-                        ) : (
-                          'No File'
-                        )}
+                      {schedule.fileURL ? (
+                        <div className="mt-2">
+                          {schedule.fileURL && schedule.fileURL.endsWith('.png') && (
+                            <center><img src={schedule.fileURL} alt="Preview" className="max-w-10 h-auto" /></center>
+                          )}
+                          {schedule.fileURL && schedule.fileURL.endsWith('.mp4') && (
+                            <center>
+                              <video controls className="max-w-10 h-auto">
+                                <source src={schedule.fileURL} type="video/mp4" />
+                                Your browser does not support the video tag.
+                              </video>
+                            </center>
+                          )}
+                        </div>
+                      ) : (
+                        'No File '
+                      )}
                       </td>
                       <td className="py-2 px-4 border-b border-gray-700">
                         {schedule.userDetails && (
