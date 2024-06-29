@@ -12,7 +12,7 @@ const ProjectScheduleTable: React.FC<ProjectScheduleTableProps> = ({ projectSche
   return (
     <section className='p-3'>
       <h4 className="text-xl font-bold mb-4">Project Schedules</h4>
-      <div className="overflow-x-auto bg-slate-600 min-h-60">
+      <div className="overflow-x-auto bg-slate-600 min-h-60 scrollbar-hide">
         <table className="min-w-full bg-gray-800">
           <thead>
             <tr>
@@ -38,7 +38,7 @@ const ProjectScheduleTable: React.FC<ProjectScheduleTableProps> = ({ projectSche
                         <center>
                           <img
                             src={schedule.fileURL}
-                            alt="Preview"
+                            alt="img"
                             className="max-w-10 h-auto cursor-pointer"
                             onClick={() => openModal(schedule.fileURL as string, schedule.fileType as string)}
                           />
