@@ -61,7 +61,7 @@ const ProjectScheduleTable: React.FC<ProjectScheduleTableProps> = ({ projectSche
                 </td>
                 <td className="py-2 px-4 border-b border-gray-700">
                   {schedule.userDetails && (
-                    <div className="flex items-center">
+                    <div>
                       <img
                         src={schedule.userDetails.profileImageUrl}
                         alt="Profile"
