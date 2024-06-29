@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'https://webtweets-dawn-forest-2637.fly.dev/schedules';
+const API_URL = 'http://localhost:3000/schedules';
 
 interface UserDetails {
   username: string | undefined;

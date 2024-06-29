@@ -32,7 +32,7 @@ const storage = new GridFsStorage({
 const upload = multer({ storage });
 
 // Upload a new file and schedule a post
-router.post('/post/schedule', upload.single('file'), async (req, res) => {
+router.post('/projects/schedules', upload.single('file'), async (req, res) => {
   try {
     const { content, scheduledTime, platform, tags, userDetails } = req.body;
 
