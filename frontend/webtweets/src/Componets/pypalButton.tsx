@@ -10,7 +10,7 @@ const PayPalButton: React.FC<PayPalButtonProps> = ({ price, onSuccess, onError }
   useEffect(() => {
     const loadPaypalScript = () => {
       const script = document.createElement('script');
-      script.src = `https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID`;
+      script.src = `https://www.paypal.com/sdk/js?client-id=AfOFjyozoEEnDqXBhpg8ZZdMpQzMc1RSbWculjLhZWwcSE_4ennV5PodWoLKVR0Wn0aoBKBujIy35ol5`;
       script.async = true;
       script.onload = () => {
         window.paypal.Buttons({
