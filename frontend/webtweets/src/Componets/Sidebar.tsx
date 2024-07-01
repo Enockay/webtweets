@@ -13,7 +13,10 @@ const Sidebar: React.FC = () => {
     <div>
       {/* Large Screen Sidebar */}
       <div className="hidden lg:block w-64 bg-gray-800 p-8 fixed left-0 top-0 h-screen">
-        <h5 className="font-bold text-white">Dashboard</h5>
+        <div className='h-10'>
+          <h5 className='m-0 text-lime-500 text-center italic'>webtweets</h5>
+        </div>
+        <hr></hr>
         <nav className="mt-8">
           <ul>
             <li className="mb-6">
