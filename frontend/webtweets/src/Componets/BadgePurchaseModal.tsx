@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
-import { useUser,Badge } from '../Componets/Context';
+import { useUser, Badge } from './Context';
+import PayPalButton from './pypalButton'
 
 interface BadgePurchaseModalProps {
   badge: Badge;
@@ -14,7 +15,7 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
   const [message, setMessage] = useState('');
   const { user, paymentMethod } = useUser();
 
-  const handlePurchase = async () => {
+  const handlePurchase = async (paypalDetails?: any) => {
     if (!user) {
       setMessage('You need to be logged in to purchase a badge.');
       return;
@@ -28,7 +29,8 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
         description: badge.description,
         price: paymentMethod === 'paypal' ? badge.priceUsd : badge.priceKsh,
         user: user.username,
-        paymentMethod
+        paymentMethod,
+        paypalDetails
       });
       if (response.data.success) {
         setMessage('Successfully purchased the badge.');
@@ -40,6 +42,14 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePaypalSuccess = (details: any) => {
+    handlePurchase(details);
+  };
+
+  const handlePaypalError = (error: any) => {
+    setMessage(`${error}An error occurred during the PayPal transaction. Please try again.`);
   };
 
   return (
@@ -67,13 +77,21 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
             className="w-full p-2 mb-4 border rounded text-black"
           />
         )}
-        <button
-          onClick={handlePurchase}
-          className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center justify-center"
-          disabled={loading}
-        >
-          {loading ? <ClipLoader size={20} color="white" /> : 'Purchase'}
-        </button>
+        {paymentMethod === 'mpesa' ? (
+          <button
+            onClick={handlePurchase}
+            className="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center justify-center"
+            disabled={loading}
+          >
+            {loading ? <ClipLoader size={20} color="white" /> : 'Purchase'}
+          </button>
+        ) : (
+          <PayPalButton
+            price={badge.priceUsd}
+            onSuccess={handlePaypalSuccess}
+            onError={handlePaypalError}
+          />
+        )}
         <button
           onClick={onClose}
           className="w-full mt-2 px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
