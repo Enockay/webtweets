@@ -15,6 +15,7 @@ const PayPalButton: React.FC<PayPalButtonProps> = ({ price, onSuccess, onError }
       script.onload = () => {
         window.paypal.Buttons({
           createOrder: (data: any, actions: any) => {
+            console.log(data);
             return actions.order.create({
               purchase_units: [{
                 amount: {
@@ -24,6 +25,7 @@ const PayPalButton: React.FC<PayPalButtonProps> = ({ price, onSuccess, onError }
             });
           },
           onApprove: async (data: any, actions: any) => {
+            console.log(data)
             try {
               const details = await actions.order.capture();
               onSuccess(details);
@@ -41,6 +43,7 @@ const PayPalButton: React.FC<PayPalButtonProps> = ({ price, onSuccess, onError }
     } else {
       window.paypal.Buttons({
         createOrder: (data: any, actions: any) => {
+          console.log(data);
           return actions.order.create({
             purchase_units: [{
               amount: {
@@ -50,6 +53,7 @@ const PayPalButton: React.FC<PayPalButtonProps> = ({ price, onSuccess, onError }
           });
         },
         onApprove: async (data: any, actions: any) => {
+          console.log(data);
           try {
             const details = await actions.order.capture();
             onSuccess(details);
