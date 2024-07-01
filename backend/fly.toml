@@ -9,6 +9,8 @@ primary_region = 'jnb'
 [build]
 
 [env]
+  PAYPAL_CLIENT_ID = 'AfOFjyozoEEnDqXBhpg8ZZdMpQzMc1RSbWculjLhZWwcSE_4ennV5PodWoLKVR0Wn0aoBKBujIy35ol5'
+  PAYPAL_SECRET = 'EPQP8Fp_5LDSjv4d0JZtb0Hq7U6IGgLRH6WCi5dF8ZyccbB5THzHjMKAzm8-F0L4rDrdFVtYV7a9iGVN'
   MONGO_URI = 'mongodb+srv://myAtlasDBUser:Enockay23@bmgpfws.bfx6ekr.mongodb.net/Webtweets?retryWrites=true&w=majority'
   PORT = '3000'
   TIKTOK_CLIENT_ID = 'awh3y2l4qe3z5a5c'

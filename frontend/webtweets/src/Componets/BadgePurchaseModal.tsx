@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { ClipLoader } from 'react-spinners';
 import { useUser, Badge } from './Context';
-import PayPalButton from './pypalButton'
+import PayPalButton from './pypalButton';
 
 interface BadgePurchaseModalProps {
   badge: Badge;
@@ -30,7 +30,7 @@ const BadgePurchaseModal: React.FC<BadgePurchaseModalProps> = ({ badge, onClose 
         price: paymentMethod === 'paypal' ? badge.priceUsd : badge.priceKsh,
         user: user.username,
         paymentMethod,
-        paypalDetails
+        paypalDetails,
       });
       if (response.data.success) {
         setMessage('Successfully purchased the badge.');

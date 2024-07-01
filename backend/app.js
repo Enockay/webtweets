@@ -8,7 +8,7 @@ const passport = require('./passport'); // Ensure this path is correct
 const session = require('express-session');
 const cors = require('cors');
 require('dotenv').config();
-
+const paypal = require("./routes/paypal");
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/dashboard');
 const authRoutes = require('./routes/auth');
@@ -57,6 +57,7 @@ app.use('/api',  usersRouter);
 app.use('/auth', authRoutes);
 app.use('/badges', badge);
 app.use("/schedules",schedule)
+app.use("/paypal",paypal);
 
 app.use((req, res, next) => {
   next(createError(404));
